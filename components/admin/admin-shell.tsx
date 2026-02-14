@@ -4,7 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
-import { LayoutDashboard, Building2, Layers, DoorOpen, Menu, X } from "lucide-react";
+import { LayoutDashboard, Building2, Layers, DoorOpen, CalendarPlus, Menu, X } from "lucide-react";
 
 interface AdminShellProps {
   children: React.ReactNode;
@@ -13,6 +13,7 @@ interface AdminShellProps {
 
 const navItems = [
   { href: "/admin", label: "Dashboard", icon: LayoutDashboard },
+  { href: "/admin/bookings/new", label: "New Booking", icon: CalendarPlus },
   { href: "/admin/buildings", label: "Buildings", icon: Building2 },
   { href: "/admin/floors", label: "Floors", icon: Layers },
   { href: "/admin/rooms", label: "Rooms", icon: DoorOpen },

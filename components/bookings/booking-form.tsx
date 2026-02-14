@@ -8,6 +8,7 @@ import { cn } from "@/lib/utils";
 import { toast } from "sonner";
 import { createBooking } from "@/actions/bookings";
 import { useRouter } from "next/navigation";
+import { motion } from "framer-motion";
 
 // Zod Schema
 const bookingSchema = z.object({
@@ -61,9 +62,30 @@ export function BookingForm({ rooms, preselectedRoomId }: BookingFormProps) {
         }
     };
 
+    const container = {
+        hidden: { opacity: 0 },
+        show: {
+            opacity: 1,
+            transition: {
+                staggerChildren: 0.06,
+            },
+        },
+    };
+
+    const item = {
+        hidden: { opacity: 0, y: 8 },
+        show: { opacity: 1, y: 0 },
+    };
+
     return (
-        <form onSubmit={handleSubmit(handleFormSubmit)} className="space-y-4">
-            <div className="space-y-2">
+        <motion.form
+            onSubmit={handleSubmit(handleFormSubmit)}
+            className="space-y-4"
+            variants={container}
+            initial="hidden"
+            animate="show"
+        >
+            <motion.div variants={item} className="space-y-2">
                 <label className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
                     Meeting Title
                 </label>
@@ -78,9 +100,9 @@ export function BookingForm({ rooms, preselectedRoomId }: BookingFormProps) {
                 {errors.title && (
                     <p className="text-sm text-destructive">{errors.title.message}</p>
                 )}
-            </div>
+            </motion.div>
 
-            <div className="grid grid-cols-2 gap-4">
+            <motion.div variants={item} className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                 <div className="space-y-2">
                     <label className="text-sm font-medium">Start Time</label>
                     <input
@@ -103,9 +125,9 @@ export function BookingForm({ rooms, preselectedRoomId }: BookingFormProps) {
                         <p className="text-sm text-destructive">{errors.endTime.message}</p>
                     )}
                 </div>
-            </div>
+            </motion.div>
 
-            <div className="space-y-2">
+            <motion.div variants={item} className="space-y-2">
                 <label className="text-sm font-medium">Room</label>
                 <select
                     {...register("roomId")}
@@ -119,9 +141,9 @@ export function BookingForm({ rooms, preselectedRoomId }: BookingFormProps) {
                 {errors.roomId && (
                     <p className="text-sm text-destructive">{errors.roomId.message}</p>
                 )}
-            </div>
+            </motion.div>
 
-            <div className="space-y-2">
+            <motion.div variants={item} className="space-y-2">
                 <label className="text-sm font-medium">Recurrence</label>
                 <select
                     {...register("recurrence")}
@@ -131,9 +153,9 @@ export function BookingForm({ rooms, preselectedRoomId }: BookingFormProps) {
                     <option value="daily">Daily</option>
                     <option value="weekly">Weekly</option>
                 </select>
-            </div>
+            </motion.div>
 
-            <div className="pt-2">
+            <motion.div variants={item} className="pt-2">
                 <button
                     type="submit"
                     disabled={isSubmitting}
@@ -148,7 +170,7 @@ export function BookingForm({ rooms, preselectedRoomId }: BookingFormProps) {
                         "Request Booking"
                     )}
                 </button>
-            </div>
-        </form>
+            </motion.div>
+        </motion.form>
     );
 }
