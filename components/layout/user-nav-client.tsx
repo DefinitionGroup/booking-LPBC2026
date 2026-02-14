@@ -1,14 +1,17 @@
 "use client";
 
-import { LogOut, LayoutDashboard } from "lucide-react";
+import { LogOut, LayoutDashboard, ArrowLeft } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { User } from "@supabase/supabase-js";
 import Link from "next/link";
+import { cn } from "@/lib/utils";
 
 export function UserNavClient({ user, role }: { user: User; role?: string }) {
     const router = useRouter();
+    const pathname = usePathname();
     const supabase = createClient();
+    const isAdminRoute = pathname.startsWith("/admin");
 
     const handleSignOut = async () => {
         await supabase.auth.signOut();
@@ -19,11 +22,16 @@ export function UserNavClient({ user, role }: { user: User; role?: string }) {
         <div className="flex items-center gap-4">
             {role === 'admin' && (
                 <Link
-                    href="/admin"
-                    className="flex items-center gap-2 px-3 py-1.5 text-sm font-medium rounded-md bg-primary/10 hover:bg-primary/20 text-primary transition-colors"
+                    href={isAdminRoute ? "/" : "/admin"}
+                    className={cn(
+                        "flex items-center gap-2 px-3 py-1.5 text-sm font-medium rounded-md transition-colors",
+                        isAdminRoute
+                            ? "bg-muted hover:bg-muted/80 text-foreground"
+                            : "bg-primary/10 hover:bg-primary/20 text-primary"
+                    )}
                 >
-                    <LayoutDashboard className="h-4 w-4" />
-                    <span className="hidden sm:inline">Admin</span>
+                    {isAdminRoute ? <ArrowLeft className="h-4 w-4" /> : <LayoutDashboard className="h-4 w-4" />}
+                    <span className="hidden sm:inline">{isAdminRoute ? "Back to App" : "Admin"}</span>
                 </Link>
             )}
 

@@ -1,5 +1,6 @@
 import { createClient } from "@/lib/supabase/server";
 import { CreateFloorButton } from "@/components/admin/create-floor-button";
+import { FloorRowActions } from "@/components/admin/floor-row-actions";
 
 export default async function AdminFloorsPage() {
   const supabase = await createClient();
@@ -38,7 +39,7 @@ export default async function AdminFloorsPage() {
                   <td className="p-4 text-muted-foreground">{floor.buildings?.name || 'Unknown'}</td>
                   <td className="p-4 text-muted-foreground">{floor.level_number}</td>
                   <td className="p-4 text-right">
-                    <span className="text-xs text-muted-foreground">Manage</span>
+                    <FloorRowActions id={floor.id} name={floor.name} />
                   </td>
                 </tr>
               ))}

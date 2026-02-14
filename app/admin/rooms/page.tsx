@@ -1,5 +1,6 @@
 import { createClient } from "@/lib/supabase/server";
 import { CreateRoomButton } from "@/components/admin/create-room-button";
+import { RoomRowActions } from "@/components/admin/room-row-actions";
 
 export default async function AdminRoomsPage() {
   const supabase = await createClient();
@@ -51,7 +52,7 @@ export default async function AdminRoomsPage() {
                     </span>
                   </td>
                   <td className="p-4 text-right">
-                    <span className="text-xs text-muted-foreground">Manage</span>
+                    <RoomRowActions id={room.id} name={room.name} isActive={room.is_active} />
                   </td>
                 </tr>
               ))}

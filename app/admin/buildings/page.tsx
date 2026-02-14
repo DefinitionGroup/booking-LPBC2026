@@ -1,5 +1,6 @@
 import { createClient } from "@/lib/supabase/server";
 import { CreateBuildingButton } from "@/components/admin/create-building-button";
+import { BuildingRowActions } from "@/components/admin/building-row-actions";
 
 export default async function AdminBuildingsPage() {
   const supabase = await createClient();
@@ -28,8 +29,7 @@ export default async function AdminBuildingsPage() {
                   <td className="p-4">{building.name}</td>
                   <td className="p-4 text-muted-foreground">{building.address}</td>
                   <td className="p-4 text-right">
-                    {/* Placeholder for Edit/Delete */}
-                    <span className="text-xs text-muted-foreground">Manage</span>
+                    <BuildingRowActions id={building.id} name={building.name} />
                   </td>
                 </tr>
               ))}
