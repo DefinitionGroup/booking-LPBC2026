@@ -1,4 +1,3 @@
-import { ShellWrapper } from "@/components/layout/shell-wrapper";
 import { AdminBookingTable } from "@/components/admin/admin-booking-table";
 import { createClient } from "@/lib/supabase/server";
 import { SeedButton } from "@/components/admin/seed-button";
@@ -25,20 +24,18 @@ export default async function AdminPage() {
     }) || [];
 
     return (
-        <ShellWrapper>
-            <div className="flex flex-col gap-6">
-                <div className="flex items-center justify-between">
-                    <div>
-                        <h1 className="text-3xl font-bold tracking-tight">Admin Dashboard</h1>
-                        <p className="text-muted-foreground">Review and approve booking requests.</p>
-                    </div>
-
-                    {/* Seed Button (Dev Tool) */}
-                    <SeedButton />
+        <div className="flex flex-col gap-6">
+            <div className="flex items-center justify-between">
+                <div>
+                    <h1 className="text-3xl font-bold tracking-tight">Admin Dashboard</h1>
+                    <p className="text-muted-foreground">Review and approve booking requests.</p>
                 </div>
 
-                <AdminBookingTable bookings={transformedBookings} />
+                {/* Seed Button (Dev Tool) */}
+                <SeedButton />
             </div>
-        </ShellWrapper>
+
+            <AdminBookingTable bookings={transformedBookings} />
+        </div>
     );
 }

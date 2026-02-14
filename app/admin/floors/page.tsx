@@ -20,36 +20,38 @@ export default async function AdminFloorsPage() {
         <CreateFloorButton buildings={buildings || []} />
       </div>
 
-      <div className="rounded-md border">
-        <table className="w-full text-sm">
-          <thead className="bg-muted/50 text-left">
-            <tr>
-              <th className="p-4 font-medium">Name</th>
-              <th className="p-4 font-medium">Building</th>
-              <th className="p-4 font-medium">Level</th>
-              <th className="p-4 font-medium text-right">Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            {(floors || []).map((floor) => (
-              <tr key={floor.id} className="border-t">
-                <td className="p-4">{floor.name}</td>
-                <td className="p-4 text-muted-foreground">{floor.buildings?.name || 'Unknown'}</td>
-                <td className="p-4 text-muted-foreground">{floor.level_number}</td>
-                <td className="p-4 text-right">
-                  <span className="text-xs text-muted-foreground">Manage</span>
-                </td>
-              </tr>
-            ))}
-            {(!floors || floors.length === 0) && (
+      <div className="rounded-md border overflow-hidden">
+        <div className="overflow-x-auto">
+          <table className="w-full min-w-[720px] text-sm">
+            <thead className="bg-muted/50 text-left">
               <tr>
-                <td colSpan={4} className="p-8 text-center text-muted-foreground">
-                  No floors found.
-                </td>
+                <th className="p-4 font-medium">Name</th>
+                <th className="p-4 font-medium">Building</th>
+                <th className="p-4 font-medium">Level</th>
+                <th className="p-4 font-medium text-right">Actions</th>
               </tr>
-            )}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {(floors || []).map((floor) => (
+                <tr key={floor.id} className="border-t">
+                  <td className="p-4">{floor.name}</td>
+                  <td className="p-4 text-muted-foreground">{floor.buildings?.name || 'Unknown'}</td>
+                  <td className="p-4 text-muted-foreground">{floor.level_number}</td>
+                  <td className="p-4 text-right">
+                    <span className="text-xs text-muted-foreground">Manage</span>
+                  </td>
+                </tr>
+              ))}
+              {(!floors || floors.length === 0) && (
+                <tr>
+                  <td colSpan={4} className="p-8 text-center text-muted-foreground">
+                    No floors found.
+                  </td>
+                </tr>
+              )}
+            </tbody>
+          </table>
+        </div>
       </div>
     </div>
   );

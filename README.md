@@ -1,36 +1,65 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Phantom Equinox
 
-## Getting Started
+Meeting-room booking app built with Next.js App Router + Supabase.
 
-First, run the development server:
+## Stack
+
+- Next.js 16 + React 19 + TypeScript
+- Tailwind CSS 4
+- Supabase Auth/Postgres (RLS enabled)
+- Server Actions for booking/admin mutations
+
+## Quick Start
+
+1. Install dependencies
+
+```bash
+npm install
+```
+
+2. Create env file
+
+```bash
+cp .env.example .env
+```
+
+3. Run app
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Environment Variables
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+See `.env.example` for all required variables.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Database Setup (Supabase SQL Editor)
 
-## Learn More
+Run scripts in this order:
 
-To learn more about Next.js, take a look at the following resources:
+1. `db/schema.sql`
+2. `db/01_auth_triggers.sql`
+3. `db/02_admin_policies.sql`
+4. `db/03_promote_admin.sql` (replace email first)
+5. Optional local/dev fixes as needed: `db/05_fix_profile_policies.sql`, `db/06_fix_recursion.sql`, `db/rls_fix.sql`
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Commands
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+- `npm run dev` start dev server
+- `npm run lint` run ESLint
+- `npm run typecheck` run TypeScript checks
+- `npm run check` run lint + typecheck
+- `npm run build` production build
 
-## Deploy on Vercel
+## Admin Routes
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+- `/admin`
+- `/admin/buildings`
+- `/admin/floors`
+- `/admin/rooms`
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## Codex / Agentic Notes
+
+- Repository-level agent guidance lives in `AGENTS.md`.
+- Use `npm run check` before opening PRs.
+- Keep SQL policy changes in `db/` and document migration order in commits.

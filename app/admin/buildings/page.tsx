@@ -1,4 +1,3 @@
-import { ShellWrapper } from "@/components/layout/shell-wrapper";
 import { createClient } from "@/lib/supabase/server";
 import { CreateBuildingButton } from "@/components/admin/create-building-button";
 
@@ -13,35 +12,37 @@ export default async function AdminBuildingsPage() {
         <CreateBuildingButton />
       </div>
 
-      <div className="rounded-md border">
-        <table className="w-full text-sm">
-          <thead className="bg-muted/50 text-left">
-            <tr>
-              <th className="p-4 font-medium">Name</th>
-              <th className="p-4 font-medium">Address</th>
-              <th className="p-4 font-medium text-right">Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            {(buildings || []).map((building) => (
-              <tr key={building.id} className="border-t">
-                <td className="p-4">{building.name}</td>
-                <td className="p-4 text-muted-foreground">{building.address}</td>
-                <td className="p-4 text-right">
-                  {/* Placeholder for Edit/Delete */}
-                  <span className="text-xs text-muted-foreground">Manage</span>
-                </td>
-              </tr>
-            ))}
-            {(!buildings || buildings.length === 0) && (
+      <div className="rounded-md border overflow-hidden">
+        <div className="overflow-x-auto">
+          <table className="w-full min-w-[640px] text-sm">
+            <thead className="bg-muted/50 text-left">
               <tr>
-                <td colSpan={3} className="p-8 text-center text-muted-foreground">
-                  No buildings found.
-                </td>
+                <th className="p-4 font-medium">Name</th>
+                <th className="p-4 font-medium">Address</th>
+                <th className="p-4 font-medium text-right">Actions</th>
               </tr>
-            )}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {(buildings || []).map((building) => (
+                <tr key={building.id} className="border-t">
+                  <td className="p-4">{building.name}</td>
+                  <td className="p-4 text-muted-foreground">{building.address}</td>
+                  <td className="p-4 text-right">
+                    {/* Placeholder for Edit/Delete */}
+                    <span className="text-xs text-muted-foreground">Manage</span>
+                  </td>
+                </tr>
+              ))}
+              {(!buildings || buildings.length === 0) && (
+                <tr>
+                  <td colSpan={3} className="p-8 text-center text-muted-foreground">
+                    No buildings found.
+                  </td>
+                </tr>
+              )}
+            </tbody>
+          </table>
+        </div>
       </div>
     </div>
   );
