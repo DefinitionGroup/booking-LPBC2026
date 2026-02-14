@@ -98,28 +98,33 @@ export function AppShell({ children, userNav }: AppShellProps) {
                         })}
                     </ul>
                 </nav>
-
-                <div className="mt-auto">
-                    {userNav}
-                </div>
             </div>
 
             {/* Main Content */}
             <div className="flex-1 flex flex-col min-w-0 overflow-hidden">
-                {/* Mobile Header */}
-                <div className="lg:hidden flex items-center gap-x-4 border-b border-border bg-card px-4 py-4 shadow-sm sm:gap-x-6 sm:px-6">
+                {/* Header (Desktop & Mobile) */}
+                <header className="sticky top-0 z-40 flex h-16 shrink-0 items-center gap-x-4 border-b border-border bg-card px-4 shadow-sm sm:gap-x-6 sm:px-6 lg:px-8">
                     <button
                         type="button"
-                        className="-m-2.5 p-2.5 text-muted-foreground hover:text-foreground"
+                        className="-m-2.5 p-2.5 text-muted-foreground lg:hidden hover:text-foreground"
                         onClick={() => setSidebarOpen(true)}
                     >
                         <span className="sr-only">Open sidebar</span>
                         <Menu className="h-6 w-6" aria-hidden="true" />
                     </button>
-                    <div className="flex-1 text-sm font-semibold leading-6 text-foreground">
-                        Dashboard
+
+                    <div className="flex flex-1 gap-x-4 self-stretch lg:gap-x-6 justify-end items-center">
+                        <span className="lg:hidden text-sm font-semibold leading-6 text-foreground mr-auto">
+                            Dashboard
+                        </span>
+
+                        <div className="flex items-center gap-x-4 lg:gap-x-6">
+                            {/* Separator if needed */}
+                            {/* User Nav */}
+                            {userNav}
+                        </div>
                     </div>
-                </div>
+                </header>
 
                 <main className="flex-1 overflow-y-auto bg-secondary/30 p-4 sm:p-6 lg:p-8">
                     <div className="mx-auto max-w-7xl">

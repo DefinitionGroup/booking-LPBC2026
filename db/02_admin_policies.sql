@@ -22,6 +22,24 @@ create policy "Everyone can view buildings" on buildings for select using (true)
 create policy "Everyone can view floors" on floors for select using (true);
 create policy "Everyone can view rooms" on rooms for select using (true);
 
+-- PROFILES
+-- Users can view their own profile
+create policy "Users can view own profile" on profiles 
+  for select 
+  using (auth.uid() = id);
+
+-- Admins can view all profiles
+create policy "Admins can view all profiles" on profiles 
+  for select 
+  using (
+    exists (select 1 from profiles where id = auth.uid() and role = 'admin')
+  );
+
+-- Users can update their own profile
+create policy "Users can update own profile" on profiles 
+  for update 
+  using (auth.uid() = id);
+
 -- WRITE (Insert/Update/Delete): ADMIN ONLY
 create policy "Admins can manage buildings" on buildings 
   for all 

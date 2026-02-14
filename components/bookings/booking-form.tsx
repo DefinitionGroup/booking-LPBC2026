@@ -6,6 +6,8 @@ import * as z from "zod";
 import { Loader2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
+import { createBooking } from "@/actions/bookings";
+import { useRouter } from "next/navigation";
 
 // Zod Schema
 const bookingSchema = z.object({
@@ -27,10 +29,10 @@ type BookingFormValues = z.infer<typeof bookingSchema>;
 interface BookingFormProps {
     rooms: { id: string; name: string }[];
     preselectedRoomId?: string;
-    onSubmit: (data: BookingFormValues) => Promise<void>;
 }
 
-export function BookingForm({ rooms, preselectedRoomId, onSubmit }: BookingFormProps) {
+export function BookingForm({ rooms, preselectedRoomId }: BookingFormProps) {
+    const router = useRouter();
     const {
         register,
         handleSubmit,
@@ -45,8 +47,14 @@ export function BookingForm({ rooms, preselectedRoomId, onSubmit }: BookingFormP
 
     const handleFormSubmit = async (data: BookingFormValues) => {
         try {
-            await onSubmit(data);
-            toast.success("Booking request submitted!");
+            const result = await createBooking(null, data);
+            if (result.success) {
+                toast.success("Booking request submitted!");
+                router.push("/bookings");
+                router.refresh();
+            } else {
+                toast.error(result.message || "Failed to submit booking.");
+            }
         } catch (error) {
             toast.error("Failed to submit booking.");
             console.error(error);

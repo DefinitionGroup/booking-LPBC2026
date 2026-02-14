@@ -3,6 +3,7 @@
 import { createClient } from "@/lib/supabase/server";
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
+import { sendBookingRequestEmail, sendBookingStatusEmail } from "@/lib/email";
 
 const bookingSchema = z.object({
     title: z.string().min(3),
@@ -78,6 +79,32 @@ export async function createBooking(prevState: any, formData: FormData | any) {
         return { success: false, message: "Failed to create booking." };
     }
 
+    // 4. Send Email to Admin
+    // Fetch room name for the email
+    const { data: room } = await supabase.from("rooms").select("name").eq("id", roomId).single();
+
+    // Find an admin to email (just pick the first one for now)
+    const { data: adminProfile } = await supabase
+        .from("profiles")
+        .select("email")
+        .eq("role", "admin")
+        .limit(1)
+        .single();
+
+    if (adminProfile?.email) {
+        await sendBookingRequestEmail(
+            adminProfile.email,
+            {
+                title,
+                userName: user.user_metadata?.full_name || "User",
+                userEmail: user.email || "Unknown",
+                startTime,
+                endTime,
+                roomName: room?.name || "Unknown Room"
+            }
+        );
+    }
+
     revalidatePath("/bookings");
     revalidatePath("/schedule");
 
@@ -103,9 +130,31 @@ export async function updateBookingStatus(bookingId: string, status: 'approved' 
         .update({ status })
         .eq("id", bookingId);
 
+    // ... existing code ...
     if (error) {
         console.error("Update error:", error);
         return { success: false, message: "Failed to update booking" };
+    }
+
+    // 3. Send Email Notification
+    // Fetch booking details to get user email and room name
+    const { data: bookingData } = await supabase
+        .from("bookings")
+        .select("*, rooms(name), profiles(email)")
+        .eq("id", bookingId)
+        .single();
+
+    if (bookingData && bookingData.profiles?.email) {
+        await sendBookingStatusEmail(
+            bookingData.profiles.email,
+            status,
+            {
+                title: bookingData.title,
+                startTime: bookingData.start_time,
+                endTime: bookingData.end_time,
+                roomName: bookingData.rooms?.name || "Unknown Room"
+            }
+        );
     }
 
     revalidatePath("/admin");

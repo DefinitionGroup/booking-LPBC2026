@@ -7,5 +7,11 @@ export async function UserNav() {
 
     if (!user) return null;
 
-    return <UserNavClient user={user} />;
+    const { data: profile } = await supabase
+        .from("profiles")
+        .select("role")
+        .eq("id", user.id)
+        .single();
+
+    return <UserNavClient user={user} role={profile?.role} />;
 }

@@ -15,18 +15,7 @@ export default async function NewBookingPage() {
             <div className="max-w-2xl mx-auto">
                 <h1 className="text-3xl font-bold tracking-tight mb-8">New Booking Request</h1>
                 <div className="rounded-xl border border-border bg-card p-6 shadow-sm">
-                    <BookingForm
-                        rooms={rooms || []}
-                        onSubmit={async (data) => {
-                            "use server";
-                            const result = await createBooking(null, data);
-                            if (result.success) {
-                                redirect("/bookings");
-                            } else {
-                                throw new Error(result.message);
-                            }
-                        }}
-                    />
+                    <BookingForm rooms={rooms || []} />
                 </div>
             </div>
         </ShellWrapper>

@@ -5,7 +5,7 @@
 
 update public.profiles
 set role = 'admin'
-where email = 'YOUR_EMAIL_HERE';
+where email = 'martin@definition.studio';
 
 -- Check if it worked
 select * from public.profiles where role = 'admin';
