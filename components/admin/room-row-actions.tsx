@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { Loader2, Power, PowerOff, Trash2 } from "lucide-react";
 import { deleteRoom, toggleRoomActive } from "@/actions/admin";
+import { useI18n } from "@/components/i18n-provider";
 
 interface RoomRowActionsProps {
   id: string;
@@ -15,30 +16,31 @@ interface RoomRowActionsProps {
 export function RoomRowActions({ id, name, isActive }: RoomRowActionsProps) {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
+  const { t } = useI18n();
 
   const handleToggle = () => {
     startTransition(async () => {
       const result = await toggleRoomActive(id, isActive);
       if (result.success) {
-        toast.success(result.message);
+        toast.success(isActive ? t("common.deactivate") : t("common.activate"));
         router.refresh();
       } else {
-        toast.error(result.message);
+        toast.error(result.message ? t(result.message) : t("errors.generic"));
       }
     });
   };
 
   const handleDelete = () => {
-    const confirmed = window.confirm(`Delete room "${name}"?`);
+    const confirmed = window.confirm(t("admin.deleteRoomConfirm", { name }));
     if (!confirmed) return;
 
     startTransition(async () => {
       const result = await deleteRoom(id);
       if (result.success) {
-        toast.success(result.message);
+        toast.success(t("common.delete"));
         router.refresh();
       } else {
-        toast.error(result.message);
+        toast.error(result.message ? t(result.message) : t("errors.generic"));
       }
     });
   };
@@ -58,7 +60,7 @@ export function RoomRowActions({ id, name, isActive }: RoomRowActionsProps) {
         ) : (
           <Power className="h-3 w-3" />
         )}
-        {isActive ? "Deactivate" : "Activate"}
+        {isActive ? t("common.deactivate") : t("common.activate")}
       </button>
       <button
         type="button"
@@ -67,7 +69,7 @@ export function RoomRowActions({ id, name, isActive }: RoomRowActionsProps) {
         className="inline-flex items-center gap-1 text-xs text-destructive hover:underline disabled:opacity-50"
       >
         {isPending ? <Loader2 className="h-3 w-3 animate-spin" /> : <Trash2 className="h-3 w-3" />}
-        Delete
+        {t("common.delete")}
       </button>
     </div>
   );

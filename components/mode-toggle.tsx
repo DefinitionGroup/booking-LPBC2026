@@ -4,6 +4,7 @@ import * as React from "react";
 import { Moon, Sun, Monitor } from "lucide-react";
 import { useTheme } from "next-themes";
 import { cn } from "@/lib/utils";
+import { useI18n } from "@/components/i18n-provider";
 
 interface ModeToggleProps {
   compact?: boolean;
@@ -11,10 +12,11 @@ interface ModeToggleProps {
 
 export function ModeToggle({ compact = false }: ModeToggleProps) {
   const { setTheme, theme } = useTheme();
+  const { t } = useI18n();
   const options = [
-    { key: "light", label: "Light", icon: Sun },
-    { key: "dark", label: "Dark", icon: Moon },
-    { key: "system", label: "System", icon: Monitor },
+    { key: "light", label: t("theme.light"), icon: Sun },
+    { key: "dark", label: t("theme.dark"), icon: Moon },
+    { key: "system", label: t("theme.system"), icon: Monitor },
   ] as const;
 
   return (

@@ -1,8 +1,10 @@
 import { createClient } from "@/lib/supabase/server";
 import { CreateFloorButton } from "@/components/admin/create-floor-button";
 import { FloorRowActions } from "@/components/admin/floor-row-actions";
+import { getServerI18n } from "@/lib/i18n/server";
 
 export default async function AdminFloorsPage() {
+  const { t } = await getServerI18n();
   const supabase = await createClient();
   const { data: floors } = await supabase
     .from('floors')
@@ -17,7 +19,7 @@ export default async function AdminFloorsPage() {
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
-        <h1 className="text-3xl font-bold tracking-tight">Floors</h1>
+        <h1 className="text-3xl font-bold tracking-tight">{t("admin.floorsTitle")}</h1>
         <CreateFloorButton buildings={buildings || []} />
       </div>
 
@@ -26,17 +28,17 @@ export default async function AdminFloorsPage() {
           <table className="w-full min-w-[720px] text-sm">
             <thead className="bg-muted/50 text-left">
               <tr>
-                <th className="p-4 font-medium">Name</th>
-                <th className="p-4 font-medium">Building</th>
-                <th className="p-4 font-medium">Level</th>
-                <th className="p-4 font-medium text-right">Actions</th>
+                <th className="p-4 font-medium">{t("admin.name")}</th>
+                <th className="p-4 font-medium">{t("admin.building")}</th>
+                <th className="p-4 font-medium">{t("admin.level")}</th>
+                <th className="p-4 font-medium text-right">{t("common.actions")}</th>
               </tr>
             </thead>
             <tbody>
               {(floors || []).map((floor) => (
                 <tr key={floor.id} className="border-t">
                   <td className="p-4">{floor.name}</td>
-                  <td className="p-4 text-muted-foreground">{floor.buildings?.name || 'Unknown'}</td>
+                  <td className="p-4 text-muted-foreground">{floor.buildings?.name || t("admin.building")}</td>
                   <td className="p-4 text-muted-foreground">{floor.level_number}</td>
                   <td className="p-4 text-right">
                     <FloorRowActions id={floor.id} name={floor.name} />
@@ -46,7 +48,7 @@ export default async function AdminFloorsPage() {
               {(!floors || floors.length === 0) && (
                 <tr>
                   <td colSpan={4} className="p-8 text-center text-muted-foreground">
-                    No floors found.
+                    {t("admin.noFloorsFound")}
                   </td>
                 </tr>
               )}

@@ -11,10 +11,11 @@ import { Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Modal } from "@/components/ui/modal";
+import { useI18n } from "@/components/i18n-provider";
 
 const formSchema = z.object({
   name: z.string().min(2, {
-    message: "Name must be at least 2 characters.",
+    message: "admin.validationNameMin",
   }),
   address: z.string().optional(),
 });
@@ -23,6 +24,8 @@ export function CreateBuildingButton() {
   const [open, setOpen] = useState(false);
   const router = useRouter();
   const supabase = createClient();
+  const { t } = useI18n();
+  const getErrorMessage = (message?: string) => (message ? t(message) : "");
 
   const { register, handleSubmit, formState: { errors }, reset } = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -41,12 +44,12 @@ export function CreateBuildingButton() {
 
       if (error) throw error;
 
-      toast.success("Building created successfully");
+      toast.success(t("admin.createBuilding"));
       setOpen(false);
       reset();
       router.refresh();
     } catch (error) {
-      toast.error("Failed to create building");
+      toast.error(t("errors.generic"));
       console.error(error);
     }
   }
@@ -55,39 +58,39 @@ export function CreateBuildingButton() {
     <>
       <Button onClick={() => setOpen(true)}>
         <Plus className="mr-2 h-4 w-4" />
-        New Building
+        {t("admin.newBuilding")}
       </Button>
 
       <Modal
         isOpen={open}
         onClose={() => setOpen(false)}
-        title="Create Building"
-        description="Add a new building to the system."
+        title={t("admin.createBuilding")}
+        description={t("admin.buildingsTitle")}
       >
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
           <div className="space-y-2">
-            <label htmlFor="name" className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">Name</label>
+            <label htmlFor="name" className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">{t("admin.name")}</label>
             <Input
               id="name"
-              placeholder="Headquarters"
+              placeholder={t("admin.placeholderBuildingName")}
               {...register("name")}
             />
-            {errors.name && <p className="text-sm text-red-500">{errors.name.message}</p>}
+            {errors.name && <p className="text-sm text-red-500">{getErrorMessage(errors.name.message)}</p>}
           </div>
 
           <div className="space-y-2">
-            <label htmlFor="address" className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">Address (Optional)</label>
+            <label htmlFor="address" className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">{t("admin.address")}</label>
             <Input
               id="address"
-              placeholder="123 Innovation Dr"
+              placeholder={t("admin.placeholderAddress")}
               {...register("address")}
             />
-            {errors.address && <p className="text-sm text-red-500">{errors.address.message}</p>}
+            {errors.address && <p className="text-sm text-red-500">{getErrorMessage(errors.address.message)}</p>}
           </div>
 
           <div className="flex justify-end pt-4 gap-2">
-            <Button type="button" variant="outline" onClick={() => setOpen(false)}>Cancel</Button>
-            <Button type="submit">Create</Button>
+            <Button type="button" variant="outline" onClick={() => setOpen(false)}>{t("common.cancel")}</Button>
+            <Button type="submit">{t("common.create")}</Button>
           </div>
         </form>
       </Modal>

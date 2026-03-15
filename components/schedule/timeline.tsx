@@ -1,5 +1,9 @@
-import { format, differenceInMinutes, startOfDay, addHours } from "date-fns";
+"use client";
+
+import { format, differenceInMinutes } from "date-fns";
 import { cn } from "@/lib/utils";
+import { useI18n } from "@/components/i18n-provider";
+import { getDateFnsLocale } from "@/lib/i18n/date-fns";
 
 interface Booking {
     id: string;
@@ -11,6 +15,8 @@ interface Booking {
 }
 
 export function Timeline({ bookings }: { bookings: Booking[] }) {
+    const { t, locale } = useI18n();
+    const dateLocale = getDateFnsLocale(locale);
     const startHour = 8; // 8 AM
     const endHour = 19; // 7 PM
     const totalHours = endHour - startHour;
@@ -23,7 +29,7 @@ export function Timeline({ bookings }: { bookings: Booking[] }) {
             {/* Header (Rooms, etc - simplified to just time for now) */}
             <div className="flex border-b border-border">
                 <div className="w-16 flex-shrink-0 border-r border-border bg-secondary/30 p-4"></div>
-                <div className="flex-1 p-4 font-medium text-sm text-center bg-secondary/10">All Rooms</div>
+                <div className="flex-1 p-4 font-medium text-sm text-center bg-secondary/10">{t("schedule.allRooms")}</div>
             </div>
 
             <div className="relative overflow-y-auto" style={{ height: `${totalHours * hourHeight}px` }}>
@@ -35,7 +41,7 @@ export function Timeline({ bookings }: { bookings: Booking[] }) {
                         style={{ top: `${(hour - startHour) * hourHeight}px`, height: `${hourHeight}px` }}
                     >
                         <div className="w-16 flex-shrink-0 -mt-2.5 text-xs text-muted-foreground text-right pr-4">
-                            {format(new Date().setHours(hour, 0), "h a")}
+                            {format(new Date().setHours(hour, 0), "h a", { locale: dateLocale })}
                         </div>
                         {/* Horizontal Line part is the border-b of this div */}
                     </div>
@@ -69,7 +75,9 @@ export function Timeline({ bookings }: { bookings: Booking[] }) {
                             >
                                 <div className="font-semibold truncate">{booking.title}</div>
                                 <div className="text-muted-foreground truncate">{booking.room?.name}</div>
-                                <div className="opacity-75">{format(start, "h:mm")} - {format(end, "h:mm")}</div>
+                                <div className="opacity-75">
+                                    {format(start, "h:mm", { locale: dateLocale })} - {format(end, "h:mm", { locale: dateLocale })}
+                                </div>
                             </div>
                         );
                     })}

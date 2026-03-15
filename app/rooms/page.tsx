@@ -1,8 +1,10 @@
 import { ShellWrapper } from "@/components/layout/shell-wrapper";
 import { createClient } from "@/lib/supabase/server";
 import { RoomCard } from "@/components/rooms/room-card";
+import { getServerI18n } from "@/lib/i18n/server";
 
 export default async function RoomsPage() {
+  const { t } = await getServerI18n();
   const supabase = await createClient();
 
   // 1. Fetch all rooms
@@ -26,8 +28,8 @@ export default async function RoomsPage() {
     <ShellWrapper>
       <div className="space-y-6">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">Meeting Rooms</h1>
-          <p className="text-muted-foreground">Browse all available spaces for your team.</p>
+          <h1 className="text-3xl font-bold tracking-tight">{t("rooms.title")}</h1>
+          <p className="text-muted-foreground">{t("rooms.subtitle")}</p>
         </div>
 
         <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
@@ -44,7 +46,7 @@ export default async function RoomsPage() {
           ))}
           {(!rooms || rooms.length === 0) && (
             <div className="col-span-full text-center py-12 text-muted-foreground">
-              No rooms found.
+              {t("rooms.noRoomsFound")}
             </div>
           )}
         </div>

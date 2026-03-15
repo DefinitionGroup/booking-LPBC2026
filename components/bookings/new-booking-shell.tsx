@@ -4,6 +4,7 @@ import Link from "next/link";
 import { motion } from "framer-motion";
 import { ArrowLeft, Sparkles } from "lucide-react";
 import { BookingForm } from "@/components/bookings/booking-form";
+import { useI18n } from "@/components/i18n-provider";
 
 interface NewBookingShellProps {
   rooms: { id: string; name: string }[];
@@ -23,8 +24,9 @@ export function NewBookingShell({
   prefilledStartTime,
   prefilledEndTime,
 }: NewBookingShellProps) {
+  const { t } = useI18n();
   const backHref = mode === "admin" ? "/admin" : "/bookings";
-  const backLabel = mode === "admin" ? "Back to Admin" : "Back to Bookings";
+  const backLabel = mode === "admin" ? t("bookings.backToAdmin") : t("bookings.backToBookings");
 
   return (
     <motion.div
@@ -54,11 +56,11 @@ export function NewBookingShell({
         <div className="relative border-b border-border px-6 py-6 sm:px-8">
           <div className="inline-flex items-center gap-2 rounded-full border border-border bg-background/80 px-3 py-1 text-xs text-muted-foreground">
             <Sparkles className="h-3.5 w-3.5" />
-            Fast booking flow
+            {t("bookings.fastBookingFlow")}
           </div>
-          <h1 className="mt-3 text-3xl font-semibold tracking-tight">New Booking Request</h1>
+          <h1 className="mt-3 text-3xl font-semibold tracking-tight">{t("bookings.newBookingRequest")}</h1>
           <p className="mt-1 text-sm text-muted-foreground">
-            Pick a room, lock a time, submit in seconds.
+            {t("bookings.bookingFlowSubtitle")}
           </p>
         </div>
 

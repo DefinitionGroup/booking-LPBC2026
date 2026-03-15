@@ -11,12 +11,19 @@ import { Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Modal } from "@/components/ui/modal";
+import { useI18n } from "@/components/i18n-provider";
 
 const formSchema = z.object({
-  name: z.string().min(2, { message: "Name must be at least 2 characters." }),
-  level: z.coerce.number().min(-10).max(100),
-  building_id: z.string().uuid({ message: "Please select a building." }),
+  name: z.string().min(2, { message: "admin.validationNameMin" }),
+  level: z.coerce
+    .number({ error: "admin.validationLevelRequired" })
+    .min(-10, { message: "admin.validationLevelMin" })
+    .max(100, { message: "admin.validationLevelMax" }),
+  building_id: z.string().uuid({ message: "admin.validationBuildingRequired" }),
 });
+
+type CreateFloorFormInput = z.input<typeof formSchema>;
+type CreateFloorFormValues = z.output<typeof formSchema>;
 
 interface CreateFloorButtonProps {
   buildings: { id: string; name: string }[];
@@ -26,8 +33,10 @@ export function CreateFloorButton({ buildings }: CreateFloorButtonProps) {
   const [open, setOpen] = useState(false);
   const router = useRouter();
   const supabase = createClient();
+  const { t } = useI18n();
+  const getErrorMessage = (message?: string) => (message ? t(message) : "");
 
-  const { register, handleSubmit, formState: { errors }, reset } = useForm<z.infer<typeof formSchema>>({
+  const { register, handleSubmit, formState: { errors }, reset } = useForm<CreateFloorFormInput, unknown, CreateFloorFormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       name: "",
@@ -36,7 +45,7 @@ export function CreateFloorButton({ buildings }: CreateFloorButtonProps) {
     },
   });
 
-  async function onSubmit(values: z.infer<typeof formSchema>) {
+  async function onSubmit(values: CreateFloorFormValues) {
     try {
       // Map 'level' to 'level_number' as per schema
       const { error } = await supabase.from('floors').insert({
@@ -47,12 +56,13 @@ export function CreateFloorButton({ buildings }: CreateFloorButtonProps) {
 
       if (error) throw error;
 
-      toast.success("Floor created successfully");
+      toast.success(t("admin.createFloor"));
       setOpen(false);
       reset();
       router.refresh();
     } catch (error) {
-      toast.error("Failed to create floor: " + error.message);
+      const message = error instanceof Error ? error.message : t("errors.generic");
+      toast.error(message);
     }
   }
 
@@ -60,52 +70,52 @@ export function CreateFloorButton({ buildings }: CreateFloorButtonProps) {
     <>
       <Button onClick={() => setOpen(true)}>
         <Plus className="mr-2 h-4 w-4" />
-        New Floor
+        {t("admin.newFloor")}
       </Button>
 
       <Modal
         isOpen={open}
         onClose={() => setOpen(false)}
-        title="Create Floor"
-        description="Add a new floor to a building."
+        title={t("admin.createFloor")}
+        description={t("admin.floorsTitle")}
       >
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
           <div className="space-y-2">
-            <label className="text-sm font-medium">Building</label>
+            <label className="text-sm font-medium">{t("admin.building")}</label>
             <select
               className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
               {...register("building_id")}
             >
-              <option value="">Select a building</option>
+              <option value="">{t("admin.selectBuilding")}</option>
               {buildings.map((b) => (
                 <option key={b.id} value={b.id}>{b.name}</option>
               ))}
             </select>
-            {errors.building_id && <p className="text-sm text-red-500">{errors.building_id.message}</p>}
+            {errors.building_id && <p className="text-sm text-red-500">{getErrorMessage(errors.building_id.message)}</p>}
           </div>
 
           <div className="space-y-2">
-            <label className="text-sm font-medium">Floor Name</label>
+            <label className="text-sm font-medium">{t("admin.name")}</label>
             <Input
-              placeholder="e.g. Generated Floor"
+              placeholder={t("admin.placeholderFloorName")}
               {...register("name")}
             />
-            {errors.name && <p className="text-sm text-red-500">{errors.name.message}</p>}
+            {errors.name && <p className="text-sm text-red-500">{getErrorMessage(errors.name.message)}</p>}
           </div>
 
           <div className="space-y-2">
-            <label className="text-sm font-medium">Level Number</label>
+            <label className="text-sm font-medium">{t("admin.level")}</label>
             <Input
               type="number"
-              placeholder="1"
+              placeholder={t("admin.placeholderLevel")}
               {...register("level")}
             />
-            {errors.level && <p className="text-sm text-red-500">{errors.level.message}</p>}
+            {errors.level && <p className="text-sm text-red-500">{getErrorMessage(errors.level.message)}</p>}
           </div>
 
           <div className="flex justify-end pt-4 gap-2">
-            <Button type="button" variant="outline" onClick={() => setOpen(false)}>Cancel</Button>
-            <Button type="submit">Create</Button>
+            <Button type="button" variant="outline" onClick={() => setOpen(false)}>{t("common.cancel")}</Button>
+            <Button type="submit">{t("common.create")}</Button>
           </div>
         </form>
       </Modal>

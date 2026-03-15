@@ -1,8 +1,10 @@
 "use client";
 
-import { Users, Wifi, Monitor, CheckCircle2, XCircle } from "lucide-react";
+import { Users, Wifi, Monitor, CheckCircle2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { motion } from "framer-motion";
+import { useI18n } from "@/components/i18n-provider";
+import Image from "next/image";
 
 export interface RoomProps {
     id: string;
@@ -14,6 +16,7 @@ export interface RoomProps {
 }
 
 export function RoomCard({ room }: { room: RoomProps }) {
+    const { t } = useI18n();
     const amenitiesList = {
         "Wifi": Wifi,
         "TV": Monitor,
@@ -27,10 +30,16 @@ export function RoomCard({ room }: { room: RoomProps }) {
             {/* Image Placeholder or Actual Image */}
             <div className="aspect-video w-full bg-secondary relative">
                 {room.imageUrl ? (
-                    <img src={room.imageUrl} alt={room.name} className="h-full w-full object-cover" />
+                    <Image
+                        src={room.imageUrl}
+                        alt={room.name}
+                        fill
+                        unoptimized
+                        className="object-cover"
+                    />
                 ) : (
                     <div className="flex h-full items-center justify-center text-muted-foreground/50">
-                        No Image
+                        {t("rooms.noImage")}
                     </div>
                 )}
 
@@ -42,7 +51,7 @@ export function RoomCard({ room }: { room: RoomProps }) {
                             ? "bg-green-500/10 text-green-700 dark:text-green-400 ring-1 ring-green-500/20"
                             : "bg-red-500/10 text-red-700 dark:text-red-400 ring-1 ring-red-500/20"
                     )}>
-                        {room.isAvailable ? "Available" : "Occupied"}
+                        {room.isAvailable ? t("rooms.available") : t("rooms.occupied")}
                     </span>
                 </div>
             </div>

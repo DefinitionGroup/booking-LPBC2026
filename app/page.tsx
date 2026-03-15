@@ -4,6 +4,8 @@ import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 import { endOfMonth, format, startOfMonth } from "date-fns";
 import { MonthlyCalendar } from "@/components/schedule/monthly-calendar";
+import { getServerI18n } from "@/lib/i18n/server";
+import { getDateFnsLocale } from "@/lib/i18n/date-fns";
 
 function StatCard({
   title,
@@ -33,6 +35,8 @@ function StatCard({
 }
 
 export default async function Home() {
+  const { t, locale } = await getServerI18n();
+  const dateLocale = getDateFnsLocale(locale);
   const supabase = await createClient();
   const {
     data: { user },
@@ -88,9 +92,11 @@ export default async function Home() {
       <div className="space-y-8">
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <div>
-            <h1 className="text-3xl font-bold tracking-tight">Dashboard</h1>
+            <h1 className="text-3xl font-bold tracking-tight">{t("dashboard.title")}</h1>
             <p className="text-muted-foreground mt-1">
-              Welcome back{user?.email ? `, ${user.email}` : ""}. Here&apos;s what&apos;s happening this month.
+              {user?.email
+                ? t("dashboard.welcomeBack", { email: user.email })
+                : t("dashboard.welcomeBackNoEmail")}
             </p>
           </div>
           <div className="flex items-center gap-2">
@@ -99,37 +105,37 @@ export default async function Home() {
               className="inline-flex items-center gap-2 rounded-lg bg-primary px-4 py-2 text-sm font-medium text-primary-foreground hover:bg-primary/90 transition-colors shadow-sm"
             >
               <Plus className="h-4 w-4" />
-              New Booking
+              {t("common.newBooking")}
             </Link>
           </div>
         </div>
 
         <div className="grid gap-4 md:grid-cols-3">
           <StatCard
-            title="My Upcoming Bookings"
+            title={t("dashboard.myUpcomingBookings")}
             value={String(upcomingBookingsCount || 0)}
             icon={Calendar}
-            description="Approved future meetings"
+            description={t("dashboard.approvedFutureMeetings")}
           />
           <StatCard
-            title="Available Rooms"
+            title={t("dashboard.availableRooms")}
             value={String(availableRoomsCount)}
             icon={Clock}
-            description={`Out of ${totalRooms} total rooms`}
+            description={t("dashboard.outOfTotalRooms", { total: totalRooms || 0 })}
           />
           <StatCard
-            title="Total Users"
+            title={t("dashboard.totalUsers")}
             value={String(totalUsers || 0)}
             icon={Users}
-            description="Active in organization"
+            description={t("dashboard.activeInOrganization")}
           />
         </div>
 
         <div className="rounded-xl border border-border bg-card shadow-sm p-5 sm:p-6">
             <div className="p-6 border-b border-border">
-              <h3 className="font-semibold">Monthly Booking Calendar</h3>
+              <h3 className="font-semibold">{t("dashboard.monthlyBookingCalendar")}</h3>
               <p className="text-xs text-muted-foreground">
-                {format(new Date(), "MMMM yyyy")}
+                {format(new Date(), "MMMM yyyy", { locale: dateLocale })}
               </p>
             </div>
             <div className="p-0 pt-5">

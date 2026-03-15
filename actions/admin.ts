@@ -10,7 +10,7 @@ async function assertAdmin() {
   } = await supabase.auth.getUser();
 
   if (!user) {
-    return { supabase, error: "Unauthorized" };
+    return { supabase, error: "errors.unauthorized" };
   }
 
   const { data: profile } = await supabase
@@ -20,7 +20,7 @@ async function assertAdmin() {
     .single();
 
   if (!profile || profile.role !== "admin") {
-    return { supabase, error: "Admins only" };
+    return { supabase, error: "errors.adminsOnly" };
   }
 
   return { supabase, error: null };

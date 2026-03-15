@@ -1,15 +1,17 @@
 import { createClient } from "@/lib/supabase/server";
 import { CreateBuildingButton } from "@/components/admin/create-building-button";
 import { BuildingRowActions } from "@/components/admin/building-row-actions";
+import { getServerI18n } from "@/lib/i18n/server";
 
 export default async function AdminBuildingsPage() {
+  const { t } = await getServerI18n();
   const supabase = await createClient();
   const { data: buildings } = await supabase.from('buildings').select('*').order('created_at', { ascending: false });
 
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
-        <h1 className="text-3xl font-bold tracking-tight">Buildings</h1>
+        <h1 className="text-3xl font-bold tracking-tight">{t("admin.buildingsTitle")}</h1>
         <CreateBuildingButton />
       </div>
 
@@ -18,9 +20,9 @@ export default async function AdminBuildingsPage() {
           <table className="w-full min-w-[640px] text-sm">
             <thead className="bg-muted/50 text-left">
               <tr>
-                <th className="p-4 font-medium">Name</th>
-                <th className="p-4 font-medium">Address</th>
-                <th className="p-4 font-medium text-right">Actions</th>
+                <th className="p-4 font-medium">{t("admin.name")}</th>
+                <th className="p-4 font-medium">{t("admin.address")}</th>
+                <th className="p-4 font-medium text-right">{t("common.actions")}</th>
               </tr>
             </thead>
             <tbody>
@@ -36,7 +38,7 @@ export default async function AdminBuildingsPage() {
               {(!buildings || buildings.length === 0) && (
                 <tr>
                   <td colSpan={3} className="p-8 text-center text-muted-foreground">
-                    No buildings found.
+                    {t("admin.noBuildingsFound")}
                   </td>
                 </tr>
               )}

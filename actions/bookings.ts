@@ -14,7 +14,9 @@ const bookingSchema = z.object({
     recurrence: z.enum(["none", "daily", "weekly"]),
 });
 
-export async function createBooking(prevState: any, formData: FormData | any) {
+type CreateBookingInput = z.input<typeof bookingSchema>;
+
+export async function createBooking(_prevState: unknown, formData: FormData | CreateBookingInput) {
     // Support both FormData (if used directly) or raw object (if used from client component via JS)
     const rawData = formData instanceof FormData ? Object.fromEntries(formData) : formData;
 
@@ -23,7 +25,7 @@ export async function createBooking(prevState: any, formData: FormData | any) {
     if (!validatedFields.success) {
         return {
             success: false,
-            message: "Invalid fields",
+            message: "errors.invalidFields",
             errors: validatedFields.error.flatten().fieldErrors,
         };
     }
@@ -38,10 +40,7 @@ export async function createBooking(prevState: any, formData: FormData | any) {
     } = await supabase.auth.getUser();
 
     if (!user) {
-        // For demo purposes, we might want to allow this or fail.
-        // Given the requirements, we need a user. 
-        // If testing without auth, we might fallback to a dummy user if configured, but let's be strict.
-        return { success: false, message: "Unauthorized. Please login." };
+        return { success: false, message: "errors.unauthorized" };
     }
 
     // 2. Check overlap
@@ -55,11 +54,11 @@ export async function createBooking(prevState: any, formData: FormData | any) {
 
     if (conflictError) {
         console.error("Conflict check error:", conflictError);
-        return { success: false, message: "Failed to check availability" };
+        return { success: false, message: "bookings.availabilityCheckFailed" };
     }
 
     if (conflicts && conflicts.length > 0) {
-        return { success: false, message: "Room is already booked for this time slot." };
+        return { success: false, message: "bookings.roomAlreadyBooked" };
     }
 
     // 3. Insert Booking
@@ -76,7 +75,7 @@ export async function createBooking(prevState: any, formData: FormData | any) {
 
     if (error) {
         console.error("Insert error:", error);
-        return { success: false, message: "Failed to create booking." };
+        return { success: false, message: "bookings.bookingFailed" };
     }
 
     // 4. Send Email to Admin
@@ -108,7 +107,7 @@ export async function createBooking(prevState: any, formData: FormData | any) {
     revalidatePath("/bookings");
     revalidatePath("/schedule");
 
-    return { success: true, message: "Booking requested successfully!" };
+    return { success: true, message: "bookings.bookingSubmitted" };
 }
 
 export async function updateBookingStatus(bookingId: string, status: 'approved' | 'rejected') {
@@ -116,12 +115,12 @@ export async function updateBookingStatus(bookingId: string, status: 'approved' 
 
     // 1. Verify Admin (Quick check)
     const { data: { user } } = await supabase.auth.getUser();
-    if (!user) return { success: false, message: "Unauthorized" };
+    if (!user) return { success: false, message: "errors.unauthorized" };
 
     const { data: profile } = await supabase.from("profiles").select("role").eq("id", user.id).single();
     // Allow if role is missing (first user) or if admin
     if (profile && profile.role !== 'admin') {
-        return { success: false, message: "Unauthorized: Admins only" };
+        return { success: false, message: "errors.adminsOnly" };
     }
 
     // 2. Update Status
@@ -133,7 +132,7 @@ export async function updateBookingStatus(bookingId: string, status: 'approved' 
     // ... existing code ...
     if (error) {
         console.error("Update error:", error);
-        return { success: false, message: "Failed to update booking" };
+        return { success: false, message: "errors.generic" };
     }
 
     // 3. Send Email Notification
@@ -161,5 +160,5 @@ export async function updateBookingStatus(bookingId: string, status: 'approved' 
     revalidatePath("/bookings");
     revalidatePath("/schedule");
 
-    return { success: true, message: `Booking ${status}` };
+    return { success: true, message: `status.${status}` };
 }

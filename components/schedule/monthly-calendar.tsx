@@ -20,6 +20,8 @@ import {
 } from "date-fns";
 import { ChevronLeft, ChevronRight, Clock3, MapPin, X } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useI18n } from "@/components/i18n-provider";
+import { getDateFnsLocale } from "@/lib/i18n/date-fns";
 
 interface CalendarBooking {
   id: string;
@@ -34,9 +36,9 @@ interface MonthlyCalendarProps {
   bookings: CalendarBooking[];
 }
 
-const weekdayLabels = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
-
 export function MonthlyCalendar({ bookings }: MonthlyCalendarProps) {
+  const { t, locale } = useI18n();
+  const dateLocale = getDateFnsLocale(locale);
   const [viewDate, setViewDate] = useState(new Date());
   const [selectedBooking, setSelectedBooking] = useState<CalendarBooking | null>(null);
   const [selectionStart, setSelectionStart] = useState<Date | null>(null);
@@ -113,9 +115,19 @@ export function MonthlyCalendar({ bookings }: MonthlyCalendarProps) {
 
   const selectionLabel = normalizedSelection
     ? isSameDay(normalizedSelection.start, normalizedSelection.end)
-      ? format(normalizedSelection.start, "EEE, MMM d")
-      : `${format(normalizedSelection.start, "MMM d")} - ${format(normalizedSelection.end, "MMM d")}`
+      ? format(normalizedSelection.start, "EEE, MMM d", { locale: dateLocale })
+      : `${format(normalizedSelection.start, "MMM d", { locale: dateLocale })} - ${format(normalizedSelection.end, "MMM d", { locale: dateLocale })}`
     : "";
+
+  const weekdayLabels = [
+    t("calendar.weekdaySun"),
+    t("calendar.weekdayMon"),
+    t("calendar.weekdayTue"),
+    t("calendar.weekdayWed"),
+    t("calendar.weekdayThu"),
+    t("calendar.weekdayFri"),
+    t("calendar.weekdaySat"),
+  ];
 
   const handleSelectDay = (day: Date) => {
     setSelectionStart(day);
@@ -127,14 +139,14 @@ export function MonthlyCalendar({ bookings }: MonthlyCalendarProps) {
       <div className="flex h-full min-h-[620px] flex-col">
         <div className="mb-4 flex items-center justify-between">
           <h3 className="text-xl font-semibold tracking-tight">
-            {format(viewDate, "MMMM yyyy")}
+            {format(viewDate, "MMMM yyyy", { locale: dateLocale })}
           </h3>
           <div className="flex items-center gap-2">
             <button
               type="button"
               onClick={() => setViewDate((prev) => subMonths(prev, 1))}
               className="grid h-8 w-8 place-items-center rounded-lg border border-border bg-background/75 text-muted-foreground hover:text-foreground"
-              aria-label="Previous month"
+              aria-label={t("calendar.previousMonth")}
             >
               <ChevronLeft className="h-4 w-4" />
             </button>
@@ -143,13 +155,13 @@ export function MonthlyCalendar({ bookings }: MonthlyCalendarProps) {
               onClick={() => setViewDate(new Date())}
               className="rounded-lg border border-border bg-background/75 px-3 py-1 text-xs font-medium text-muted-foreground hover:text-foreground"
             >
-              Today
+              {t("common.today")}
             </button>
             <button
               type="button"
               onClick={() => setViewDate((prev) => addMonths(prev, 1))}
               className="grid h-8 w-8 place-items-center rounded-lg border border-border bg-background/75 text-muted-foreground hover:text-foreground"
-              aria-label="Next month"
+              aria-label={t("calendar.nextMonth")}
             >
               <ChevronRight className="h-4 w-4" />
             </button>
@@ -165,7 +177,7 @@ export function MonthlyCalendar({ bookings }: MonthlyCalendarProps) {
               className="mb-3 flex flex-wrap items-center gap-2 rounded-xl border border-border bg-background/75 px-3 py-2"
             >
               <span className="text-xs text-muted-foreground">
-                Selected: <span className="font-medium text-foreground">{selectionLabel}</span>
+                {t("calendar.selected")}: <span className="font-medium text-foreground">{selectionLabel}</span>
               </span>
               <div className="ml-auto flex items-center gap-2">
                 <button
@@ -177,13 +189,13 @@ export function MonthlyCalendar({ bookings }: MonthlyCalendarProps) {
                   }}
                   className="rounded-lg border border-border px-2.5 py-1 text-xs text-muted-foreground hover:text-foreground"
                 >
-                  Clear
+                  {t("calendar.clear")}
                 </button>
                 <Link
                   href={reserveHref}
                   className="rounded-lg bg-primary px-3 py-1.5 text-xs font-medium text-primary-foreground hover:bg-primary/90"
                 >
-                  Reserve Selected
+                  {t("calendar.reserveSelected")}
                 </Link>
               </div>
             </motion.div>
@@ -259,12 +271,12 @@ export function MonthlyCalendar({ bookings }: MonthlyCalendarProps) {
                       className="w-full truncate rounded-md border border-red-500/80 bg-red-600 px-2 py-1 text-left text-[11px] font-medium text-white transition-colors hover:bg-red-500"
                       title={booking.title}
                     >
-                      {format(parseISO(booking.start_time), "h:mm a")} {booking.title}
+                      {format(parseISO(booking.start_time), "h:mm a", { locale: dateLocale })} {booking.title}
                     </button>
                   ))}
                   {dayBookings.length > 3 && (
                     <div className="px-1 text-[11px] text-muted-foreground">
-                      +{dayBookings.length - 3} more
+                      {t("calendar.moreItems", { count: dayBookings.length - 3 })}
                     </div>
                   )}
                 </div>
@@ -279,7 +291,7 @@ export function MonthlyCalendar({ bookings }: MonthlyCalendarProps) {
           <>
             <motion.button
               type="button"
-              aria-label="Close details"
+              aria-label={t("common.cancel")}
               className="fixed inset-0 z-50 bg-black/45 backdrop-blur-[1px]"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
@@ -298,7 +310,7 @@ export function MonthlyCalendar({ bookings }: MonthlyCalendarProps) {
                 <div className="mb-4 flex items-start justify-between gap-4">
                   <div>
                     <p className="text-xs uppercase tracking-[0.14em] text-muted-foreground">
-                      Booking Details
+                      {t("calendar.bookingDetails")}
                     </p>
                     <h4 className="mt-1 text-lg font-semibold">
                       {selectedBooking.title}
@@ -317,13 +329,13 @@ export function MonthlyCalendar({ bookings }: MonthlyCalendarProps) {
                   <div className="flex items-center gap-2 text-muted-foreground">
                     <Clock3 className="h-4 w-4" />
                     <span>
-                      {format(parseISO(selectedBooking.start_time), "EEEE, MMM d • h:mm a")} -{" "}
-                      {format(parseISO(selectedBooking.end_time), "h:mm a")}
+                      {format(parseISO(selectedBooking.start_time), "EEEE, MMM d • h:mm a", { locale: dateLocale })} -{" "}
+                      {format(parseISO(selectedBooking.end_time), "h:mm a", { locale: dateLocale })}
                     </span>
                   </div>
                   <div className="flex items-center gap-2 text-muted-foreground">
                     <MapPin className="h-4 w-4" />
-                    <span>{selectedBooking.room?.name || "Unknown room"}</span>
+                    <span>{selectedBooking.room?.name || t("calendar.unknownRoom")}</span>
                   </div>
                   <div>
                     <span
@@ -336,7 +348,7 @@ export function MonthlyCalendar({ bookings }: MonthlyCalendarProps) {
                             : "bg-red-500/15 text-red-700 dark:text-red-300"
                       )}
                     >
-                      {selectedBooking.status}
+                      {t(`status.${selectedBooking.status}`)}
                     </span>
                   </div>
                 </div>

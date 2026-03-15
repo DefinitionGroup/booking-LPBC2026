@@ -7,12 +7,15 @@ import { User } from "@supabase/supabase-js";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
 import { ModeToggle } from "@/components/mode-toggle";
+import { LanguageSwitcher } from "@/components/language-switcher";
+import { useI18n } from "@/components/i18n-provider";
 
 export function UserNavClient({ user, role }: { user: User; role?: string }) {
     const router = useRouter();
     const pathname = usePathname();
     const supabase = createClient();
     const isAdminRoute = pathname.startsWith("/admin");
+    const { t } = useI18n();
 
     const handleSignOut = async () => {
         await supabase.auth.signOut();
@@ -21,6 +24,7 @@ export function UserNavClient({ user, role }: { user: User; role?: string }) {
 
     return (
         <div className="flex items-center gap-3">
+            <LanguageSwitcher />
             <ModeToggle compact />
 
             {role === 'admin' && (
@@ -34,14 +38,16 @@ export function UserNavClient({ user, role }: { user: User; role?: string }) {
                     )}
                 >
                     {isAdminRoute ? <ArrowLeft className="h-4 w-4" /> : <LayoutDashboard className="h-4 w-4" />}
-                    <span className="hidden sm:inline">{isAdminRoute ? "Back to App" : "Admin"}</span>
+                    <span className="hidden sm:inline">{isAdminRoute ? t("nav.backToApp") : t("common.admin")}</span>
                 </Link>
             )}
 
             <div className="flex items-center gap-3 rounded-xl border border-border/70 bg-background/78 px-3 py-1.5 backdrop-blur-sm">
                 <div className="flex flex-col items-end">
                     <span className="max-w-[160px] truncate text-xs font-medium leading-none">{user.email}</span>
-                    <span className="text-[10px] text-muted-foreground capitalize">{role || 'User'}</span>
+                    <span className="text-[10px] text-muted-foreground capitalize">
+                        {role === "admin" ? t("roles.admin") : t("roles.user")}
+                    </span>
                 </div>
 
                 <div className="h-8 w-8 rounded-full bg-primary/95 flex items-center justify-center text-xs font-medium text-primary-foreground uppercase">
@@ -51,7 +57,7 @@ export function UserNavClient({ user, role }: { user: User; role?: string }) {
                 <button
                     onClick={handleSignOut}
                     className="text-muted-foreground hover:text-destructive transition-colors"
-                    title="Sign Out"
+                    title={t("nav.signOut")}
                 >
                     <LogOut className="h-4 w-4" />
                 </button>

@@ -5,23 +5,26 @@ import { useForm, useWatch } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { addMinutes, differenceInMinutes, format } from "date-fns";
+import type { Locale as DateFnsLocale } from "date-fns";
 import { Loader2, Timer } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
 import { createBooking } from "@/actions/bookings";
 import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
+import { useI18n } from "@/components/i18n-provider";
+import { getDateFnsLocale } from "@/lib/i18n/date-fns";
 
 const bookingSchema = z.object({
-  title: z.string().min(3, "Title must be at least 3 characters"),
+  title: z.string().min(3, "bookings.validationTitleMin"),
   description: z.string().optional(),
-  date: z.string().min(1, "Please pick a date"),
-  time: z.string().regex(/^\d{2}:\d{2}$/, "Please pick a valid time"),
+  date: z.string().min(1, "bookings.validationDateRequired"),
+  time: z.string().regex(/^\d{2}:\d{2}$/, "bookings.validationTimeInvalid"),
   durationMinutes: z
-    .number({ invalid_type_error: "Duration is required" })
-    .min(30, "Minimum is 30 minutes")
-    .max(300, "Maximum is 5 hours"),
-  roomId: z.string().min(1, "Please select a room"),
+    .number({ error: "bookings.validationDurationRequired" })
+    .min(30, "bookings.validationDurationMin")
+    .max(300, "bookings.validationDurationMax"),
+  roomId: z.string().min(1, "bookings.validationRoomRequired"),
   recurrence: z.enum(["none", "daily", "weekly"]),
 });
 
@@ -55,12 +58,12 @@ function roundToNextQuarter(date: Date) {
   return rounded;
 }
 
-function buildTimeOptions() {
+function buildTimeOptions(locale: DateFnsLocale) {
   return Array.from({ length: 48 }, (_, index) => {
     const hour = Math.floor(index / 2);
     const minute = index % 2 === 0 ? 0 : 30;
     const value = `${String(hour).padStart(2, "0")}:${String(minute).padStart(2, "0")}`;
-    const label = format(new Date(`2000-01-01T${value}:00`), "h:mm a");
+    const label = format(new Date(`2000-01-01T${value}:00`), "h:mm a", { locale });
     return { value, label };
   });
 }
@@ -72,6 +75,8 @@ export function BookingForm({
   prefilledEndTime,
 }: BookingFormProps) {
   const router = useRouter();
+  const { t, locale } = useI18n();
+  const dateLocale = getDateFnsLocale(locale);
 
   const prefilledStart = parseDateTime(prefilledStartTime);
   const prefilledEnd = parseDateTime(prefilledEndTime);
@@ -100,7 +105,8 @@ export function BookingForm({
     },
   });
 
-  const timeOptions = useMemo(() => buildTimeOptions(), []);
+  const timeOptions = useMemo(() => buildTimeOptions(dateLocale), [dateLocale]);
+  const getErrorMessage = (message?: string) => (message ? t(message) : "");
   const [watchedDate, watchedTime, durationMinutesRaw] = useWatch({
     control,
     name: ["date", "time", "durationMinutes"],
@@ -118,7 +124,7 @@ export function BookingForm({
   const handleFormSubmit = async (data: BookingFormValues) => {
     const start = new Date(`${data.date}T${data.time}:00`);
     if (Number.isNaN(start.getTime())) {
-      toast.error("Invalid start date/time.");
+      toast.error(t("bookings.invalidDateTime"));
       return;
     }
 
@@ -135,14 +141,14 @@ export function BookingForm({
       });
 
       if (result.success) {
-        toast.success("Booking request submitted!");
+        toast.success(t("bookings.bookingSubmitted"));
         router.push("/bookings");
         router.refresh();
       } else {
-        toast.error(result.message || "Failed to submit booking.");
+        toast.error(result.message ? t(result.message) : t("bookings.bookingFailed"));
       }
     } catch (error) {
-      toast.error("Failed to submit booking.");
+      toast.error(t("bookings.bookingFailed"));
       console.error(error);
     }
   };
@@ -166,31 +172,31 @@ export function BookingForm({
       animate="show"
     >
       <motion.div variants={item} className="space-y-2">
-        <label className="text-sm font-medium">Meeting Title</label>
+        <label className="text-sm font-medium">{t("bookings.meetingTitle")}</label>
         <input
           {...register("title")}
           className={cn(
             "flex h-10 w-full rounded-xl border border-input bg-background/88 px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
             errors.title && "border-destructive focus-visible:ring-destructive"
           )}
-          placeholder="Strategy Sync"
+          placeholder={t("bookings.titlePlaceholder")}
         />
-        {errors.title && <p className="text-sm text-destructive">{errors.title.message}</p>}
+        {errors.title && <p className="text-sm text-destructive">{getErrorMessage(errors.title.message)}</p>}
       </motion.div>
 
       <motion.div variants={item} className="grid grid-cols-1 gap-4 sm:grid-cols-2">
         <div className="space-y-2">
-          <label className="text-sm font-medium">Date</label>
+          <label className="text-sm font-medium">{t("bookings.date")}</label>
           <input
             type="date"
             {...register("date")}
             className="flex h-10 w-full rounded-xl border border-input bg-background/88 px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
           />
-          {errors.date && <p className="text-sm text-destructive">{errors.date.message}</p>}
+          {errors.date && <p className="text-sm text-destructive">{getErrorMessage(errors.date.message)}</p>}
         </div>
 
         <div className="space-y-2">
-          <label className="text-sm font-medium">Start Time</label>
+          <label className="text-sm font-medium">{t("bookings.startTime")}</label>
           <select
             {...register("time")}
             className="flex h-10 w-full rounded-xl border border-input bg-background/88 px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
@@ -201,13 +207,13 @@ export function BookingForm({
               </option>
             ))}
           </select>
-          {errors.time && <p className="text-sm text-destructive">{errors.time.message}</p>}
+          {errors.time && <p className="text-sm text-destructive">{getErrorMessage(errors.time.message)}</p>}
         </div>
       </motion.div>
 
       <motion.div variants={item} className="rounded-xl border border-border bg-background/60 p-4">
         <div className="mb-2 flex items-center justify-between gap-3">
-          <label className="text-sm font-medium">Duration</label>
+          <label className="text-sm font-medium">{t("bookings.duration")}</label>
           <div className="inline-flex items-center gap-2 rounded-lg border border-border px-2 py-1 text-xs text-muted-foreground">
             <Timer className="h-3.5 w-3.5" />
             {Math.floor(durationMinutes / 60)}h {durationMinutes % 60}m
@@ -251,7 +257,7 @@ export function BookingForm({
         </div>
 
         <div className="mt-3 flex items-center gap-3">
-          <label className="text-xs text-muted-foreground">Manual minutes</label>
+          <label className="text-xs text-muted-foreground">{t("bookings.manualMinutes")}</label>
           <input
             type="number"
             min={30}
@@ -267,31 +273,31 @@ export function BookingForm({
           />
         </div>
         {errors.durationMinutes && (
-          <p className="mt-2 text-sm text-destructive">{errors.durationMinutes.message}</p>
+          <p className="mt-2 text-sm text-destructive">{getErrorMessage(errors.durationMinutes.message)}</p>
         )}
       </motion.div>
 
       <motion.div variants={item} className="rounded-xl border border-border bg-background/55 px-3 py-2 text-sm">
         {preview ? (
           <span className="text-muted-foreground">
-            Ends at{" "}
+            {t("bookings.endsAt")}{" "}
             <span className="font-medium text-foreground">
-              {format(preview.end, "EEE, MMM d • h:mm a")}
+              {format(preview.end, "EEE, MMM d • h:mm a", { locale: dateLocale })}
             </span>
           </span>
         ) : (
-          <span className="text-muted-foreground">Pick a date and time to see end time.</span>
+          <span className="text-muted-foreground">{t("bookings.pickDateTimeForEndPreview")}</span>
         )}
       </motion.div>
 
       <motion.div variants={item} className="space-y-2">
-        <label className="text-sm font-medium">Room</label>
+        <label className="text-sm font-medium">{t("bookings.room")}</label>
         <select
           {...register("roomId")}
           className="flex h-10 w-full rounded-xl border border-input bg-background/88 px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
         >
           <option value="" disabled>
-            Select a room
+            {t("bookings.selectRoom")}
           </option>
           {rooms.map((room) => (
             <option key={room.id} value={room.id}>
@@ -299,18 +305,18 @@ export function BookingForm({
             </option>
           ))}
         </select>
-        {errors.roomId && <p className="text-sm text-destructive">{errors.roomId.message}</p>}
+        {errors.roomId && <p className="text-sm text-destructive">{getErrorMessage(errors.roomId.message)}</p>}
       </motion.div>
 
       <motion.div variants={item} className="space-y-2">
-        <label className="text-sm font-medium">Recurrence</label>
+        <label className="text-sm font-medium">{t("bookings.recurrence")}</label>
         <select
           {...register("recurrence")}
           className="flex h-10 w-full rounded-xl border border-input bg-background/88 px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
         >
-          <option value="none">Does not repeat</option>
-          <option value="daily">Daily</option>
-          <option value="weekly">Weekly</option>
+          <option value="none">{t("bookings.doesNotRepeat")}</option>
+          <option value="daily">{t("bookings.daily")}</option>
+          <option value="weekly">{t("bookings.weekly")}</option>
         </select>
       </motion.div>
 
@@ -323,10 +329,10 @@ export function BookingForm({
           {isSubmitting ? (
             <>
               <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-              Booking...
+              {t("bookings.bookingSubmitting")}
             </>
           ) : (
-            "Request Booking"
+            t("bookings.requestBooking")
           )}
         </button>
       </motion.div>

@@ -5,23 +5,25 @@ import { Database, Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import { seedDatabase } from "@/actions/seed";
 import { useRouter } from "next/navigation";
+import { useI18n } from "@/components/i18n-provider";
 
 export function SeedButton() {
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
+  const { t } = useI18n();
 
   const handleSeed = async () => {
     setIsLoading(true);
     try {
       const result = await seedDatabase();
       if (result.success) {
-        toast.success(result.message);
+        toast.success(t("admin.seedData"));
         router.refresh();
       } else {
-        toast.error(result.message);
+        toast.error(result.message ? t(result.message) : t("errors.generic"));
       }
-    } catch (error) {
-      toast.error("An unexpected error occurred.");
+    } catch {
+      toast.error(t("errors.generic"));
     } finally {
       setIsLoading(false);
     }
@@ -38,7 +40,7 @@ export function SeedButton() {
       ) : (
         <Database className="h-4 w-4" />
       )}
-      {isLoading ? "Seeding..." : "Seed Data"}
+      {isLoading ? t("admin.seeding") : t("admin.seedData")}
     </button>
   );
 }

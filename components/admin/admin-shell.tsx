@@ -6,12 +6,14 @@ import { usePathname } from "next/navigation";
 import { AnimatePresence, motion } from "framer-motion";
 import { cn } from "@/lib/utils";
 import { transitions, variants } from "@/components/ui/motion";
+import { useI18n } from "@/components/i18n-provider";
 import {
   LayoutDashboard,
   Building2,
   Layers,
   DoorOpen,
   CalendarPlus,
+  Users,
   Menu,
   X,
   ShieldCheck,
@@ -23,11 +25,12 @@ interface AdminShellProps {
 }
 
 const navItems = [
-  { href: "/admin", label: "Dashboard", icon: LayoutDashboard },
-  { href: "/admin/bookings/new", label: "New Booking", icon: CalendarPlus },
-  { href: "/admin/buildings", label: "Buildings", icon: Building2 },
-  { href: "/admin/floors", label: "Floors", icon: Layers },
-  { href: "/admin/rooms", label: "Rooms", icon: DoorOpen },
+  { href: "/admin", labelKey: "common.dashboard", icon: LayoutDashboard },
+  { href: "/admin/bookings/new", labelKey: "common.newBooking", icon: CalendarPlus },
+  { href: "/admin/users", labelKey: "common.users", icon: Users },
+  { href: "/admin/buildings", labelKey: "common.buildings", icon: Building2 },
+  { href: "/admin/floors", labelKey: "common.floors", icon: Layers },
+  { href: "/admin/rooms", labelKey: "common.rooms", icon: DoorOpen },
 ];
 
 function isActivePath(pathname: string, href: string) {
@@ -38,8 +41,9 @@ function isActivePath(pathname: string, href: string) {
 export function AdminShell({ children, userNav }: AdminShellProps) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const pathname = usePathname();
+  const { t } = useI18n();
   const pageTitle =
-    navItems.find((item) => isActivePath(pathname, item.href))?.label ?? "Admin";
+    navItems.find((item) => isActivePath(pathname, item.href))?.labelKey ?? "common.admin";
 
   return (
     <div className="relative min-h-screen text-foreground">
@@ -47,7 +51,7 @@ export function AdminShell({ children, userNav }: AdminShellProps) {
         {sidebarOpen && (
           <motion.button
             type="button"
-            aria-label="Close sidebar"
+            aria-label={t("common.cancel")}
             onClick={() => setSidebarOpen(false)}
             className="fixed inset-0 z-40 bg-black/45 backdrop-blur-[1px] lg:hidden"
             initial={{ opacity: 0 }}
@@ -74,15 +78,15 @@ export function AdminShell({ children, userNav }: AdminShellProps) {
                 <ShieldCheck className="h-5 w-5" />
               </div>
               <div>
-                <div className="text-sm font-semibold tracking-tight">Admin Console</div>
-                <div className="text-[11px] text-muted-foreground">Operations + approvals</div>
+                <div className="text-sm font-semibold tracking-tight">{t("nav.adminConsole")}</div>
+                <div className="text-[11px] text-muted-foreground">{t("nav.operationsApprovals")}</div>
               </div>
             </div>
             <button
               type="button"
               className="ml-auto lg:hidden text-muted-foreground hover:text-foreground"
               onClick={() => setSidebarOpen(false)}
-              aria-label="Close sidebar"
+              aria-label={t("common.cancel")}
             >
               <X className="h-5 w-5" />
             </button>
@@ -117,7 +121,7 @@ export function AdminShell({ children, userNav }: AdminShellProps) {
                         />
                       )}
                       <item.icon className="relative z-10 h-4 w-4" />
-                      <span className="relative z-10">{item.label}</span>
+                      <span className="relative z-10">{t(item.labelKey)}</span>
                     </Link>
                   </motion.li>
                 );
@@ -138,13 +142,13 @@ export function AdminShell({ children, userNav }: AdminShellProps) {
               className="grid h-9 w-9 place-items-center rounded-xl border border-border/70 bg-background/80 text-muted-foreground hover:text-foreground lg:hidden"
               onClick={() => setSidebarOpen(true)}
             >
-              <span className="sr-only">Open sidebar</span>
+              <span className="sr-only">{t("common.dashboard")}</span>
               <Menu className="h-5 w-5" />
             </button>
 
             <div className="min-w-0">
-              <p className="text-[11px] uppercase tracking-[0.18em] text-muted-foreground">Control Panel</p>
-              <p className="truncate text-sm font-semibold">{pageTitle}</p>
+              <p className="text-[11px] uppercase tracking-[0.18em] text-muted-foreground">{t("nav.controlPanel")}</p>
+              <p className="truncate text-sm font-semibold">{t(pageTitle)}</p>
             </div>
 
             <div className="ml-auto">{userNav}</div>

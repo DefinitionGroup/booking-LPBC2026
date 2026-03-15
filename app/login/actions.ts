@@ -23,19 +23,11 @@ export async function login(formData: FormData) {
 }
 
 export async function signup(formData: FormData) {
-    const supabase = await createClient();
+    const email = formData.get("email");
+    const fallback = typeof email === "string" && email.length > 0
+        ? `auth.accessManagedError:${email}`
+        : "auth.accessManagedError";
 
-    const data = {
-        email: formData.get("email") as string,
-        password: formData.get("password") as string,
-    };
-
-    const { error } = await supabase.auth.signUp(data);
-
-    if (error) {
-        redirect(`/login?error=${encodeURIComponent(error.message)}`);
-    }
-
-    revalidatePath("/", "layout");
-    redirect("/");
+    revalidatePath("/login", "page");
+    redirect(`/login?error=${encodeURIComponent(fallback)}`);
 }

@@ -6,6 +6,7 @@ import { usePathname } from "next/navigation";
 import { AnimatePresence, motion } from "framer-motion";
 import { cn } from "@/lib/utils";
 import { transitions, variants } from "@/components/ui/motion";
+import { useI18n } from "@/components/i18n-provider";
 import {
   LayoutDashboard,
   CalendarDays,
@@ -25,12 +26,12 @@ interface AppShellProps {
 }
 
 const navigation = [
-  { name: "Dashboard", href: "/", icon: LayoutDashboard },
-  { name: "Schedule", href: "/schedule", icon: CalendarDays },
-  { name: "Bookings", href: "/bookings", icon: CreditCard },
-  { name: "Rooms", href: "/rooms", icon: DoorOpen },
-  { name: "Campus", href: "/building", icon: Building2 },
-  { name: "Settings", href: "/settings", icon: Settings },
+  { key: "common.dashboard", href: "/", icon: LayoutDashboard },
+  { key: "common.schedule", href: "/schedule", icon: CalendarDays },
+  { key: "common.bookings", href: "/bookings", icon: CreditCard },
+  { key: "common.rooms", href: "/rooms", icon: DoorOpen },
+  { key: "common.buildings", href: "/building", icon: Building2 },
+  { key: "common.settings", href: "/settings", icon: Settings },
 ];
 
 function isActivePath(pathname: string, href: string) {
@@ -41,12 +42,13 @@ function isActivePath(pathname: string, href: string) {
 export function AppShell({ children, userNav }: AppShellProps) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const pathname = usePathname();
+  const { t } = useI18n();
   const pageTitle =
-    navigation.find((item) => isActivePath(pathname, item.href))?.name ?? "Workspace";
+    navigation.find((item) => isActivePath(pathname, item.href))?.key ?? "nav.workspace";
   const quickCtaHref = pathname.startsWith("/bookings/new") ? "/schedule" : "/bookings/new";
   const quickCtaLabel = pathname.startsWith("/bookings/new")
-    ? "Open live schedule"
-    : "Fast, clean scheduling";
+    ? t("nav.openLiveSchedule")
+    : t("nav.fastCleanScheduling");
 
   return (
     <div className="relative min-h-screen text-foreground">
@@ -54,7 +56,7 @@ export function AppShell({ children, userNav }: AppShellProps) {
         {sidebarOpen && (
           <motion.button
             type="button"
-            aria-label="Close sidebar"
+            aria-label={t("common.cancel")}
             onClick={() => setSidebarOpen(false)}
             className="fixed inset-0 z-40 bg-black/45 backdrop-blur-[1px] lg:hidden"
             initial={{ opacity: 0 }}
@@ -81,15 +83,15 @@ export function AppShell({ children, userNav }: AppShellProps) {
                 <Building2 className="h-5 w-5" />
               </div>
               <div>
-                <div className="text-sm font-semibold tracking-tight">Equinox</div>
-                <div className="text-[11px] text-muted-foreground">Room Intelligence</div>
+                <div className="text-sm font-semibold tracking-tight">{t("common.appName")}</div>
+                <div className="text-[11px] text-muted-foreground">{t("nav.roomIntelligence")}</div>
               </div>
             </div>
             <button
               type="button"
               className="ml-auto lg:hidden text-muted-foreground hover:text-foreground"
               onClick={() => setSidebarOpen(false)}
-              aria-label="Close sidebar"
+              aria-label={t("common.cancel")}
             >
               <X className="h-5 w-5" />
             </button>
@@ -105,7 +107,7 @@ export function AppShell({ children, userNav }: AppShellProps) {
               {navigation.map((item) => {
                 const isActive = isActivePath(pathname, item.href);
                 return (
-                  <motion.li key={item.name} variants={variants.fadeInUp}>
+                  <motion.li key={item.key} variants={variants.fadeInUp}>
                     <Link
                       href={item.href}
                       onClick={() => setSidebarOpen(false)}
@@ -124,7 +126,7 @@ export function AppShell({ children, userNav }: AppShellProps) {
                         />
                       )}
                       <item.icon className="relative z-10 h-4 w-4" />
-                      <span className="relative z-10">{item.name}</span>
+                      <span className="relative z-10">{t(item.key)}</span>
                     </Link>
                   </motion.li>
                 );
@@ -156,13 +158,13 @@ export function AppShell({ children, userNav }: AppShellProps) {
               className="grid h-9 w-9 place-items-center rounded-xl border border-border/70 bg-background/80 text-muted-foreground hover:text-foreground lg:hidden"
               onClick={() => setSidebarOpen(true)}
             >
-              <span className="sr-only">Open sidebar</span>
+              <span className="sr-only">{t("common.schedule")}</span>
               <Menu className="h-5 w-5" />
             </button>
 
             <div className="min-w-0">
-              <p className="text-[11px] uppercase tracking-[0.18em] text-muted-foreground">Workspace</p>
-              <p className="truncate text-sm font-semibold">{pageTitle}</p>
+              <p className="text-[11px] uppercase tracking-[0.18em] text-muted-foreground">{t("nav.workspace")}</p>
+              <p className="truncate text-sm font-semibold">{t(pageTitle)}</p>
             </div>
 
             <div className="ml-auto">{userNav}</div>

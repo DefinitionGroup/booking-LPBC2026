@@ -2,7 +2,7 @@
 
 import * as React from "react";
 import { X } from "lucide-react";
-import { cn } from "./button";
+import { useI18n } from "@/components/i18n-provider";
 
 interface ModalProps {
   isOpen: boolean;
@@ -13,6 +13,7 @@ interface ModalProps {
 }
 
 export function Modal({ isOpen, onClose, title, description, children }: ModalProps) {
+  const { t } = useI18n();
   if (!isOpen) return null;
 
   return (
@@ -23,7 +24,7 @@ export function Modal({ isOpen, onClose, title, description, children }: ModalPr
           className="absolute right-4 top-4 rounded-sm opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
         >
           <X className="h-4 w-4" />
-          <span className="sr-only">Close</span>
+          <span className="sr-only">{t("common.cancel")}</span>
         </button>
         <div className="flex flex-col space-y-1.5 p-6 pb-2">
           <h3 className="font-semibold leading-none tracking-tight">{title}</h3>
