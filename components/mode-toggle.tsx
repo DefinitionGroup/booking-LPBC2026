@@ -5,41 +5,48 @@ import { Moon, Sun, Monitor } from "lucide-react";
 import { useTheme } from "next-themes";
 import { cn } from "@/lib/utils";
 
-export function ModeToggle() {
+interface ModeToggleProps {
+  compact?: boolean;
+}
+
+export function ModeToggle({ compact = false }: ModeToggleProps) {
   const { setTheme, theme } = useTheme();
+  const options = [
+    { key: "light", label: "Light", icon: Sun },
+    { key: "dark", label: "Dark", icon: Moon },
+    { key: "system", label: "System", icon: Monitor },
+  ] as const;
 
   return (
-    <div className="flex items-center gap-2 rounded-lg border border-border bg-card p-1">
-      <button
-        onClick={() => setTheme("light")}
-        className={cn(
-          "flex items-center gap-2 rounded-md px-3 py-1.5 text-sm font-medium transition-colors hover:bg-muted hover:text-foreground",
-          theme === "light" ? "bg-muted text-foreground shadow-sm" : "text-muted-foreground"
-        )}
-      >
-        <Sun className="h-4 w-4" />
-        Light
-      </button>
-      <button
-        onClick={() => setTheme("dark")}
-        className={cn(
-          "flex items-center gap-2 rounded-md px-3 py-1.5 text-sm font-medium transition-colors hover:bg-muted hover:text-foreground",
-          theme === "dark" ? "bg-muted text-foreground shadow-sm" : "text-muted-foreground"
-        )}
-      >
-        <Moon className="h-4 w-4" />
-        Dark
-      </button>
-      <button
-        onClick={() => setTheme("system")}
-        className={cn(
-          "flex items-center gap-2 rounded-md px-3 py-1.5 text-sm font-medium transition-colors hover:bg-muted hover:text-foreground",
-          theme === "system" ? "bg-muted text-foreground shadow-sm" : "text-muted-foreground"
-        )}
-      >
-        <Monitor className="h-4 w-4" />
-        System
-      </button>
+    <div
+      className={cn(
+        "flex items-center rounded-xl border border-border bg-card/80 backdrop-blur-sm p-1",
+        compact ? "gap-1" : "gap-2"
+      )}
+    >
+      {options.map((option) => {
+        const Icon = option.icon;
+        const active = theme === option.key;
+        return (
+          <button
+            key={option.key}
+            type="button"
+            onClick={() => setTheme(option.key)}
+            aria-label={option.label}
+            title={option.label}
+            className={cn(
+              "rounded-lg text-sm font-medium transition-colors hover:bg-muted hover:text-foreground",
+              compact
+                ? "grid h-8 w-8 place-items-center"
+                : "flex items-center gap-2 px-3 py-1.5",
+              active ? "bg-muted text-foreground shadow-sm" : "text-muted-foreground"
+            )}
+          >
+            <Icon className="h-4 w-4" />
+            {!compact && option.label}
+          </button>
+        );
+      })}
     </div>
   );
 }

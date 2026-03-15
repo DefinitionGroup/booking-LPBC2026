@@ -8,6 +8,8 @@ import { BookingForm } from "@/components/bookings/booking-form";
 interface NewBookingShellProps {
   rooms: { id: string; name: string }[];
   mode: "app" | "admin";
+  prefilledStartTime?: string;
+  prefilledEndTime?: string;
 }
 
 const fadeUp = {
@@ -15,7 +17,12 @@ const fadeUp = {
   animate: { opacity: 1, y: 0 },
 };
 
-export function NewBookingShell({ rooms, mode }: NewBookingShellProps) {
+export function NewBookingShell({
+  rooms,
+  mode,
+  prefilledStartTime,
+  prefilledEndTime,
+}: NewBookingShellProps) {
   const backHref = mode === "admin" ? "/admin" : "/bookings";
   const backLabel = mode === "admin" ? "Back to Admin" : "Back to Bookings";
 
@@ -60,7 +67,11 @@ export function NewBookingShell({ rooms, mode }: NewBookingShellProps) {
           transition={{ delay: 0.15 }}
           className="relative px-6 py-6 sm:px-8 sm:py-8"
         >
-          <BookingForm rooms={rooms} />
+          <BookingForm
+            rooms={rooms}
+            prefilledStartTime={prefilledStartTime}
+            prefilledEndTime={prefilledEndTime}
+          />
         </motion.div>
       </motion.div>
     </motion.div>
