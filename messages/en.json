@@ -43,7 +43,20 @@
     "emailPlaceholder": "you@company.com",
     "accessManaged": "Access is provisioned by your workspace administrator.",
     "accessManagedError": "Access must be created by an administrator.",
-    "accessManagedErrorWithEmail": "Access for {email} must be created by an administrator."
+    "accessManagedErrorWithEmail": "Access for {email} must be created by an administrator.",
+    "forgotPassword": "Forgot password?",
+    "forgotPasswordTitle": "Reset your password",
+    "forgotPasswordSubtitle": "Enter your email and we'll send you a reset link.",
+    "sendResetLink": "Send reset link",
+    "resetEmailSent": "Check your email for a password reset link.",
+    "resetEmailSentHint": "If an account exists for that address, you'll receive an email shortly.",
+    "backToLogin": "Back to login",
+    "resetPasswordTitle": "Set new password",
+    "resetPasswordSubtitle": "Choose a new password for your account.",
+    "newPassword": "New password",
+    "confirmPassword": "Confirm password",
+    "updatePassword": "Update password",
+    "passwordUpdatedSuccess": "Your password has been updated. Sign in with your new password."
   },
   "nav": {
     "workspace": "Workspace",

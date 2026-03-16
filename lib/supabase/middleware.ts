@@ -48,8 +48,8 @@ export async function updateSession(request: NextRequest) {
         return NextResponse.redirect(url);
     }
 
-    // Redirect logged-in users away from login page
-    if (user && request.nextUrl.pathname.startsWith("/login")) {
+    // Redirect logged-in users away from login page (but not password reset)
+    if (user && request.nextUrl.pathname.startsWith("/login") && !request.nextUrl.pathname.startsWith("/login/reset-password")) {
         const url = request.nextUrl.clone();
         url.pathname = "/";
         return NextResponse.redirect(url);

@@ -2,12 +2,14 @@ import { login } from "./actions";
 import { Building2 } from "lucide-react";
 import { getServerI18n } from "@/lib/i18n/server";
 import { LanguageSwitcher } from "@/components/language-switcher";
+import Link from "next/link";
 
 export default async function LoginPage(props: {
     searchParams: Promise<{ [key: string]: string | string[] | undefined }>
 }) {
     const searchParams = await props.searchParams;
     const error = searchParams.error;
+    const success = searchParams.success;
     const { t } = await getServerI18n();
     const errorMessage =
         typeof error === "string" && error.startsWith("auth.accessManagedError")
@@ -37,6 +39,12 @@ export default async function LoginPage(props: {
                     </div>
                 )}
 
+                {success === "passwordUpdated" && (
+                    <div className="rounded-md bg-green-500/15 p-3 text-sm text-green-700 dark:text-green-400 border border-green-500/20 text-center">
+                        {t("auth.passwordUpdatedSuccess")}
+                    </div>
+                )}
+
                 <div className="rounded-xl border border-border bg-card p-6 shadow-sm">
                     <form className="flex flex-col gap-4" suppressHydrationWarning>
                         <div className="space-y-2">
@@ -52,7 +60,15 @@ export default async function LoginPage(props: {
                             />
                         </div>
                         <div className="space-y-2">
-                            <label className="text-sm font-medium" htmlFor="password">{t("auth.password")}</label>
+                            <div className="flex items-center justify-between">
+                                <label className="text-sm font-medium" htmlFor="password">{t("auth.password")}</label>
+                                <Link
+                                    href="/login/forgot-password"
+                                    className="text-xs text-muted-foreground hover:text-foreground"
+                                >
+                                    {t("auth.forgotPassword")}
+                                </Link>
+                            </div>
                             <input
                                 id="password"
                                 name="password"

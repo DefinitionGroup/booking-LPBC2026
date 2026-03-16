@@ -43,7 +43,20 @@
     "emailPlaceholder": "tu@empresa.com",
     "accessManaged": "El acceso lo concede el administrador del espacio.",
     "accessManagedError": "El acceso debe ser creado por un administrador.",
-    "accessManagedErrorWithEmail": "El acceso para {email} debe ser creado por un administrador."
+    "accessManagedErrorWithEmail": "El acceso para {email} debe ser creado por un administrador.",
+    "forgotPassword": "¿Olvidaste tu contraseña?",
+    "forgotPasswordTitle": "Restablecer contraseña",
+    "forgotPasswordSubtitle": "Ingresa tu correo y te enviaremos un enlace de restablecimiento.",
+    "sendResetLink": "Enviar enlace",
+    "resetEmailSent": "Revisa tu correo para el enlace de restablecimiento.",
+    "resetEmailSentHint": "Si existe una cuenta con esa dirección, recibirás un correo en breve.",
+    "backToLogin": "Volver al inicio de sesión",
+    "resetPasswordTitle": "Nueva contraseña",
+    "resetPasswordSubtitle": "Elige una nueva contraseña para tu cuenta.",
+    "newPassword": "Nueva contraseña",
+    "confirmPassword": "Confirmar contraseña",
+    "updatePassword": "Actualizar contraseña",
+    "passwordUpdatedSuccess": "Tu contraseña ha sido actualizada. Inicia sesión con tu nueva contraseña."
   },
   "nav": {
     "workspace": "Espacio",
