@@ -222,7 +222,7 @@ export default async function Home() {
           </div>
           <Link
             href="/bookings/new"
-            className="inline-flex items-center rounded-md bg-primary px-4 py-2 text-xs text-primary-foreground shadow-sm transition-all hover:bg-primary/90"
+            className="inline-flex items-center rounded-full bg-emphasis px-4 py-2 text-xs font-medium text-emphasis-foreground shadow-sm transition-all hover:bg-emphasis/85"
           >
             <Plus className="mr-2 h-4 w-4" />
             {t("common.newBooking")}

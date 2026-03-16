@@ -17,7 +17,6 @@ import {
   CreditCard,
   Building2,
   Sparkles,
-  ArrowUpRight,
 } from "lucide-react";
 
 interface AppShellProps {
@@ -73,7 +72,7 @@ export function AppShell({ children, userNav }: AppShellProps) {
           animate={{ x: 0, opacity: 1 }}
           transition={transitions.smooth}
           className={cn(
-            "fixed inset-y-0 left-0 z-50 w-72 m-3 rounded-lg bg-card/80 backdrop-blur-xl shadow-md transition-transform lg:sticky lg:top-4 lg:m-0 lg:h-[calc(100vh-2rem)] lg:translate-x-0",
+            "fixed inset-y-0 left-0 z-50 flex w-72 flex-col m-3 rounded-lg bg-card/80 backdrop-blur-xl shadow-md transition-transform lg:sticky lg:top-4 lg:m-0 lg:h-[calc(100vh-2rem)] lg:translate-x-0",
             sidebarOpen ? "translate-x-0" : "-translate-x-[120%] lg:translate-x-0"
           )}
         >
@@ -134,15 +133,15 @@ export function AppShell({ children, userNav }: AppShellProps) {
             </ul>
           </motion.nav>
 
-          <div className="border-t border-border/30 p-4">
+          <div className="border-t border-border/30 p-4 space-y-3">
             <Link
               href={quickCtaHref}
-              className="group flex items-center gap-2 rounded-md bg-muted/40 px-3 py-2 text-xs text-muted-foreground transition-colors hover:bg-muted/70 hover:text-foreground"
+              className="inline-flex h-8 w-full items-center justify-center gap-2 rounded-full bg-emphasis text-emphasis-foreground px-3 text-xs font-medium transition-colors hover:bg-emphasis/85"
             >
-              <Sparkles className="h-3.5 w-3.5 text-cyan-600 dark:text-cyan-300" />
+              <Sparkles className="h-3.5 w-3.5" />
               <span>{quickCtaLabel}</span>
-              <ArrowUpRight className="ml-auto h-3.5 w-3.5 opacity-60 transition-opacity group-hover:opacity-100" />
             </Link>
+            {userNav}
           </div>
         </motion.aside>
 
@@ -163,11 +162,9 @@ export function AppShell({ children, userNav }: AppShellProps) {
             </button>
 
             <div className="min-w-0">
-              <p className="text-[11px] uppercase tracking-[0.18em] text-muted-foreground">{t("nav.workspace")}</p>
+              <p className="text-xs text-muted-foreground">{t("nav.workspace")}</p>
               <p className="truncate text-xs">{t(pageTitle)}</p>
             </div>
-
-            <div className="ml-auto">{userNav}</div>
           </motion.header>
 
           <motion.main

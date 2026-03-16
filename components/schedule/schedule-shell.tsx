@@ -3,6 +3,8 @@
 import { useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { format, parseISO, startOfMonth } from "date-fns";
+import { Plus } from "lucide-react";
+import Link from "next/link";
 import { MiniCalendar } from "./mini-calendar";
 import { Timeline } from "./timeline";
 import { useI18n } from "@/components/i18n-provider";
@@ -40,11 +42,20 @@ export function ScheduleShell({ bookings, currentDate, busyDays }: ScheduleShell
 
   return (
     <div className="flex flex-col gap-6">
-      <div>
-        <h1 className="text-3xl tracking-tight">{t("schedule.title")}</h1>
-        <p className="text-muted-foreground">
-          {format(selected, "EEEE, MMMM d, yyyy", { locale: dateLocale })}
-        </p>
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-3xl tracking-tight">{t("schedule.title")}</h1>
+          <p className="text-muted-foreground">
+            {format(selected, "EEEE, MMMM d, yyyy", { locale: dateLocale })}
+          </p>
+        </div>
+        <Link
+          href={`/bookings/new?start=${format(selected, "yyyy-MM-dd'T'09:00")}&end=${format(selected, "yyyy-MM-dd'T'10:00")}`}
+          className="inline-flex items-center gap-2 rounded-full bg-emphasis px-4 py-2 text-xs font-medium text-emphasis-foreground shadow-sm transition-colors hover:bg-emphasis/85"
+        >
+          <Plus className="h-4 w-4" />
+          {t("common.newBooking")}
+        </Link>
       </div>
 
       <div className="flex flex-col-reverse gap-6 lg:flex-row">

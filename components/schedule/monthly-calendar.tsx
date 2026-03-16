@@ -193,7 +193,7 @@ export function MonthlyCalendar({ bookings }: MonthlyCalendarProps) {
                 </button>
                 <Link
                   href={reserveHref}
-                  className="rounded-lg bg-primary px-3 py-1.5 text-xs text-primary-foreground hover:bg-primary/90"
+                  className="rounded-full bg-emphasis px-3 py-1.5 text-xs font-medium text-emphasis-foreground hover:bg-emphasis/85"
                 >
                   {t("calendar.reserveSelected")}
                 </Link>

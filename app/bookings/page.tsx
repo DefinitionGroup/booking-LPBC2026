@@ -22,7 +22,7 @@ export default async function BookingsPage() {
                     <h1 className="text-3xl tracking-tight">{t("bookings.title")}</h1>
                     <Link
                         href="/bookings/new"
-                        className="inline-flex items-center gap-2 rounded-md bg-primary px-4 py-2 text-xs text-primary-foreground hover:bg-primary/90 transition-colors shadow-sm"
+                        className="inline-flex items-center gap-2 rounded-full bg-emphasis px-4 py-2 text-xs font-medium text-emphasis-foreground hover:bg-emphasis/85 transition-colors shadow-sm"
                     >
                         <Plus className="h-4 w-4" />
                         {t("common.newBooking")}

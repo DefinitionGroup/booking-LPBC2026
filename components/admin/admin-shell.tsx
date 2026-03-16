@@ -68,7 +68,7 @@ export function AdminShell({ children, userNav }: AdminShellProps) {
           animate={{ x: 0, opacity: 1 }}
           transition={transitions.smooth}
           className={cn(
-            "fixed inset-y-0 left-0 z-50 w-72 m-3 rounded-lg bg-card/80 backdrop-blur-xl shadow-md transition-transform lg:sticky lg:top-4 lg:m-0 lg:h-[calc(100vh-2rem)] lg:translate-x-0",
+            "fixed inset-y-0 left-0 z-50 flex w-72 flex-col m-3 rounded-lg bg-card/80 backdrop-blur-xl shadow-md transition-transform lg:sticky lg:top-4 lg:m-0 lg:h-[calc(100vh-2rem)] lg:translate-x-0",
             sidebarOpen ? "translate-x-0" : "-translate-x-[120%] lg:translate-x-0"
           )}
         >
@@ -128,6 +128,10 @@ export function AdminShell({ children, userNav }: AdminShellProps) {
               })}
             </ul>
           </motion.nav>
+
+          <div className="border-t border-border/30 p-4">
+            {userNav}
+          </div>
         </motion.aside>
 
         <div className="flex min-w-0 flex-1 flex-col gap-3 sm:gap-4">
@@ -150,8 +154,6 @@ export function AdminShell({ children, userNav }: AdminShellProps) {
               <p className="text-[11px] uppercase tracking-[0.18em] text-muted-foreground">{t("nav.controlPanel")}</p>
               <p className="truncate text-xs">{t(pageTitle)}</p>
             </div>
-
-            <div className="ml-auto">{userNav}</div>
           </motion.header>
 
           <motion.main
