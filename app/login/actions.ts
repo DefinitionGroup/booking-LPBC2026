@@ -4,6 +4,7 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { headers } from "next/headers";
 import { z } from "zod";
+import { getAppUrl } from "@/lib/app-url";
 import { createClient } from "@/lib/supabase/server";
 
 const resetPasswordSchema = z.object({
@@ -56,10 +57,7 @@ export async function resetPassword(formData: FormData) {
         redirect(`/login/forgot-password?error=${encodeURIComponent(parsed.error.issues[0]?.message ?? "Please enter your email address.")}`);
     }
 
-    const headersList = await headers();
-    const host = headersList.get("x-forwarded-host") || headersList.get("host") || "localhost:3000";
-    const proto = headersList.get("x-forwarded-proto") || "http";
-    const origin = headersList.get("origin") || `${proto}://${host}`;
+    const origin = getAppUrl(await headers());
 
     const { error } = await supabase.auth.resetPasswordForEmail(parsed.data.email, {
         redirectTo: `${origin}/auth/callback?flow=recovery&next=/login/reset-password`,

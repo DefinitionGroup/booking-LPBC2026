@@ -1,7 +1,9 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
+import { headers } from "next/headers";
 import { z } from "zod";
+import { getAppUrl } from "@/lib/app-url";
 import { createAdminClient, createClient } from "@/lib/supabase/server";
 
 const companySchema = z.object({
@@ -79,15 +81,13 @@ export async function inviteUserToCompany(values: z.input<typeof inviteUserSchem
   try {
     const adminClient = await createAdminClient();
     const { email, fullName, companyId, role } = parsed.data;
-    const redirectTo = process.env.NEXT_PUBLIC_APP_URL
-      ? `${process.env.NEXT_PUBLIC_APP_URL}/login`
-      : undefined;
+    const redirectTo = `${getAppUrl(await headers())}/login`;
 
     const { data, error } = await adminClient.auth.admin.inviteUserByEmail(email, {
       data: {
         full_name: fullName,
       },
-      ...(redirectTo ? { redirectTo } : {}),
+      redirectTo,
     });
 
     if (error) {
