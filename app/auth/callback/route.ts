@@ -8,8 +8,16 @@ export async function GET(request: Request) {
 
   if (code) {
     const supabase = await createClient();
-    const { error } = await supabase.auth.exchangeCodeForSession(code);
+    const { data, error } = await supabase.auth.exchangeCodeForSession(code);
     if (!error) {
+      // When Supabase strips the redirect path we lose the "next" param.
+      // Detect a recent password-recovery flow and send the user to reset-password.
+      if (next === "/" && data.user?.recovery_sent_at) {
+        const recoveryAge = Date.now() - new Date(data.user.recovery_sent_at).getTime();
+        if (recoveryAge < 3_600_000) {
+          return NextResponse.redirect(`${origin}/login/reset-password`);
+        }
+      }
       return NextResponse.redirect(`${origin}${next}`);
     }
   }
