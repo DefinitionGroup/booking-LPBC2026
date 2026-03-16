@@ -42,7 +42,9 @@ export async function resetPassword(formData: FormData) {
     }
 
     const headersList = await headers();
-    const origin = headersList.get("origin") || headersList.get("x-forwarded-host") || "";
+    const host = headersList.get("x-forwarded-host") || headersList.get("host") || "localhost:3000";
+    const proto = headersList.get("x-forwarded-proto") || "http";
+    const origin = headersList.get("origin") || `${proto}://${host}`;
 
     const { error } = await supabase.auth.resetPasswordForEmail(email, {
         redirectTo: `${origin}/auth/callback?next=/login/reset-password`,
