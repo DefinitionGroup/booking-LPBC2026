@@ -28,7 +28,7 @@ export default async function RoomsPage() {
     <ShellWrapper>
       <div className="space-y-6">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">{t("rooms.title")}</h1>
+          <h1 className="text-3xl tracking-tight">{t("rooms.title")}</h1>
           <p className="text-muted-foreground">{t("rooms.subtitle")}</p>
         </div>
 
@@ -40,7 +40,7 @@ export default async function RoomsPage() {
                 ...room,
                 amenities: room.amenities || [],
                 isAvailable: !occupiedRoomIds.has(room.id),
-                imageUrl: undefined
+                imageUrl: room.image_url || undefined
               }}
             />
           ))}

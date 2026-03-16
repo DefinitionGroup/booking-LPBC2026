@@ -40,10 +40,10 @@ export function AdminBookingTable({ bookings }: { bookings: Booking[] }) {
     };
 
     return (
-        <div className="rounded-xl border border-border bg-card shadow-sm overflow-hidden">
+        <div className="rounded-lg bg-card shadow-sm overflow-hidden">
             <div className="overflow-x-auto">
-                <table className="w-full min-w-[920px] text-sm text-left">
-                    <thead className="bg-secondary text-muted-foreground font-medium border-b border-border">
+                <table className="w-full min-w-[920px] text-xs text-left">
+                    <thead className="bg-secondary/50 text-muted-foreground border-b border-border/30">
                         <tr>
                             <th className="px-6 py-3">{t("admin.queued")}</th>
                             <th className="px-6 py-3">{t("bookings.tableTitle")}</th>
@@ -61,12 +61,12 @@ export function AdminBookingTable({ bookings }: { bookings: Booking[] }) {
                                         {/* Ideally created_at diff */}
                                         {t("admin.new")}
                                     </td>
-                                    <td className="px-6 py-4 font-medium">{booking.title}</td>
+                                    <td className="px-6 py-4">{booking.title}</td>
                                     <td className="px-6 py-4">{booking.rooms?.name || t("calendar.unknownRoom")}</td>
                                     <td className="px-6 py-4 text-muted-foreground">{booking.profiles?.email}</td>
                                     <td className="px-6 py-4">
                                         <div className="flex flex-col text-xs">
-                                            <span className="font-medium">{format(new Date(booking.start_time), "MMM d", { locale: dateLocale })}</span>
+                                            <span>{format(new Date(booking.start_time), "MMM d", { locale: dateLocale })}</span>
                                             <span className="text-muted-foreground">
                                                 {format(new Date(booking.start_time), "h:mm a", { locale: dateLocale })} - {format(new Date(booking.end_time), "h:mm a", { locale: dateLocale })}
                                             </span>

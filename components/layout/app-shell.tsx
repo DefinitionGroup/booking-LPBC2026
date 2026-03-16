@@ -73,17 +73,17 @@ export function AppShell({ children, userNav }: AppShellProps) {
           animate={{ x: 0, opacity: 1 }}
           transition={transitions.smooth}
           className={cn(
-            "fixed inset-y-0 left-0 z-50 w-72 m-3 rounded-2xl border border-white/50 bg-card/75 backdrop-blur-xl shadow-[0_20px_60px_-30px_rgba(8,23,41,0.45)] transition-transform lg:sticky lg:top-4 lg:m-0 lg:h-[calc(100vh-2rem)] lg:translate-x-0",
+            "fixed inset-y-0 left-0 z-50 w-72 m-3 rounded-lg bg-card/80 backdrop-blur-xl shadow-md transition-transform lg:sticky lg:top-4 lg:m-0 lg:h-[calc(100vh-2rem)] lg:translate-x-0",
             sidebarOpen ? "translate-x-0" : "-translate-x-[120%] lg:translate-x-0"
           )}
         >
-          <div className="flex h-16 items-center border-b border-border/70 px-5">
+          <div className="flex h-16 items-center border-b border-border/30 px-5">
             <div className="flex items-center gap-3">
-              <div className="grid h-9 w-9 place-items-center rounded-xl bg-primary text-primary-foreground shadow-sm">
+              <div className="grid h-9 w-9 place-items-center rounded-md bg-primary text-primary-foreground">
                 <Building2 className="h-5 w-5" />
               </div>
               <div>
-                <div className="text-sm font-semibold tracking-tight">{t("common.appName")}</div>
+                <div className="text-xs tracking-tight">{t("common.appName")}</div>
                 <div className="text-[11px] text-muted-foreground">{t("nav.roomIntelligence")}</div>
               </div>
             </div>
@@ -112,7 +112,7 @@ export function AppShell({ children, userNav }: AppShellProps) {
                       href={item.href}
                       onClick={() => setSidebarOpen(false)}
                       className={cn(
-                        "relative flex items-center gap-3 overflow-hidden rounded-xl px-3 py-2.5 text-sm font-medium transition-colors",
+                        "relative flex items-center gap-3 overflow-hidden rounded-md px-3 py-2.5 text-xs transition-colors",
                         isActive
                           ? "text-foreground"
                           : "text-muted-foreground hover:bg-muted/70 hover:text-foreground"
@@ -121,7 +121,7 @@ export function AppShell({ children, userNav }: AppShellProps) {
                       {isActive && (
                         <motion.span
                           layoutId="app-nav-active"
-                          className="absolute inset-0 rounded-xl border border-border/80 bg-gradient-to-r from-white/70 to-white/40 dark:from-white/10 dark:to-white/5"
+                          className="absolute inset-0 rounded-md bg-muted/60 dark:bg-muted/40"
                           transition={transitions.spring}
                         />
                       )}
@@ -134,10 +134,10 @@ export function AppShell({ children, userNav }: AppShellProps) {
             </ul>
           </motion.nav>
 
-          <div className="border-t border-border/70 p-4">
+          <div className="border-t border-border/30 p-4">
             <Link
               href={quickCtaHref}
-              className="group flex items-center gap-2 rounded-xl border border-border/70 bg-background/65 px-3 py-2 text-xs text-muted-foreground transition-colors hover:bg-muted/60 hover:text-foreground"
+              className="group flex items-center gap-2 rounded-md bg-muted/40 px-3 py-2 text-xs text-muted-foreground transition-colors hover:bg-muted/70 hover:text-foreground"
             >
               <Sparkles className="h-3.5 w-3.5 text-cyan-600 dark:text-cyan-300" />
               <span>{quickCtaLabel}</span>
@@ -151,11 +151,11 @@ export function AppShell({ children, userNav }: AppShellProps) {
             initial={{ y: -12, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
             transition={transitions.smooth}
-            className="sticky top-3 z-30 flex h-16 items-center gap-3 rounded-2xl border border-white/50 bg-card/70 px-4 backdrop-blur-xl shadow-[0_8px_35px_-22px_rgba(8,23,41,0.45)] sm:px-5"
+            className="sticky top-3 z-30 flex h-16 items-center gap-3 rounded-lg bg-card/80 px-4 backdrop-blur-xl shadow-sm sm:px-5"
           >
             <button
               type="button"
-              className="grid h-9 w-9 place-items-center rounded-xl border border-border/70 bg-background/80 text-muted-foreground hover:text-foreground lg:hidden"
+              className="grid h-9 w-9 place-items-center rounded-md bg-muted/50 text-muted-foreground hover:bg-muted hover:text-foreground lg:hidden"
               onClick={() => setSidebarOpen(true)}
             >
               <span className="sr-only">{t("common.schedule")}</span>
@@ -164,7 +164,7 @@ export function AppShell({ children, userNav }: AppShellProps) {
 
             <div className="min-w-0">
               <p className="text-[11px] uppercase tracking-[0.18em] text-muted-foreground">{t("nav.workspace")}</p>
-              <p className="truncate text-sm font-semibold">{t(pageTitle)}</p>
+              <p className="truncate text-xs">{t(pageTitle)}</p>
             </div>
 
             <div className="ml-auto">{userNav}</div>
@@ -175,7 +175,7 @@ export function AppShell({ children, userNav }: AppShellProps) {
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={transitions.smooth}
-            className="min-h-0 flex-1 overflow-y-auto rounded-2xl border border-white/45 bg-card/58 p-4 backdrop-blur-xl shadow-[0_22px_70px_-35px_rgba(8,23,41,0.5)] sm:p-6 lg:p-8"
+            className="min-h-0 flex-1 overflow-y-auto rounded-lg bg-card/70 p-4 backdrop-blur-xl shadow-sm sm:p-6 lg:p-8"
           >
             <div className="mx-auto w-full max-w-7xl">{children}</div>
           </motion.main>

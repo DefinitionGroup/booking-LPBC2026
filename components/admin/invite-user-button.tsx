@@ -76,7 +76,7 @@ export function InviteUserButton({ companies }: InviteUserButtonProps) {
       >
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
           <div className="space-y-2">
-            <label className="text-sm font-medium" htmlFor="invite-full-name">
+            <label className="text-xs" htmlFor="invite-full-name">
               {t("admin.fullName")}
             </label>
             <Input
@@ -84,11 +84,11 @@ export function InviteUserButton({ companies }: InviteUserButtonProps) {
               placeholder={t("admin.placeholderFullName")}
               {...register("fullName")}
             />
-            {errors.fullName && <p className="text-sm text-red-500">{getErrorMessage(errors.fullName.message)}</p>}
+            {errors.fullName && <p className="text-xs text-red-500">{getErrorMessage(errors.fullName.message)}</p>}
           </div>
 
           <div className="space-y-2">
-            <label className="text-sm font-medium" htmlFor="invite-email">
+            <label className="text-xs" htmlFor="invite-email">
               {t("auth.email")}
             </label>
             <Input
@@ -97,16 +97,16 @@ export function InviteUserButton({ companies }: InviteUserButtonProps) {
               placeholder={t("auth.emailPlaceholder")}
               {...register("email")}
             />
-            {errors.email && <p className="text-sm text-red-500">{getErrorMessage(errors.email.message)}</p>}
+            {errors.email && <p className="text-xs text-red-500">{getErrorMessage(errors.email.message)}</p>}
           </div>
 
           <div className="space-y-2">
-            <label className="text-sm font-medium" htmlFor="invite-company">
+            <label className="text-xs" htmlFor="invite-company">
               {t("admin.company")}
             </label>
             <select
               id="invite-company"
-              className="flex h-10 w-full rounded-xl border border-input bg-background/88 px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+              className="flex h-10 w-full rounded-xl border border-input bg-background/88 px-3 py-2 text-xs ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
               {...register("companyId")}
             >
               <option value="">{t("admin.selectCompany")}</option>
@@ -116,16 +116,16 @@ export function InviteUserButton({ companies }: InviteUserButtonProps) {
                 </option>
               ))}
             </select>
-            {errors.companyId && <p className="text-sm text-red-500">{getErrorMessage(errors.companyId.message)}</p>}
+            {errors.companyId && <p className="text-xs text-red-500">{getErrorMessage(errors.companyId.message)}</p>}
           </div>
 
           <div className="space-y-2">
-            <label className="text-sm font-medium" htmlFor="invite-role">
+            <label className="text-xs" htmlFor="invite-role">
               {t("admin.userRole")}
             </label>
             <select
               id="invite-role"
-              className="flex h-10 w-full rounded-xl border border-input bg-background/88 px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+              className="flex h-10 w-full rounded-xl border border-input bg-background/88 px-3 py-2 text-xs ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
               {...register("role")}
             >
               <option value="user">{t("roles.user")}</option>

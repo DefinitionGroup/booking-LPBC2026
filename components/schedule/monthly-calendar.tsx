@@ -18,7 +18,7 @@ import {
   startOfWeek,
   subMonths,
 } from "date-fns";
-import { ChevronLeft, ChevronRight, Clock3, MapPin, X } from "lucide-react";
+import { ChevronLeft, ChevronRight, Clock3, MapPin, X, CalendarDays } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useI18n } from "@/components/i18n-provider";
 import { getDateFnsLocale } from "@/lib/i18n/date-fns";
@@ -138,7 +138,7 @@ export function MonthlyCalendar({ bookings }: MonthlyCalendarProps) {
     <>
       <div className="flex h-full min-h-[620px] flex-col">
         <div className="mb-4 flex items-center justify-between">
-          <h3 className="text-xl font-semibold tracking-tight">
+          <h3 className="text-xl tracking-tight">
             {format(viewDate, "MMMM yyyy", { locale: dateLocale })}
           </h3>
           <div className="flex items-center gap-2">
@@ -153,7 +153,7 @@ export function MonthlyCalendar({ bookings }: MonthlyCalendarProps) {
             <button
               type="button"
               onClick={() => setViewDate(new Date())}
-              className="rounded-lg border border-border bg-background/75 px-3 py-1 text-xs font-medium text-muted-foreground hover:text-foreground"
+              className="rounded-lg border border-border bg-background/75 px-3 py-1 text-xs text-muted-foreground hover:text-foreground"
             >
               {t("common.today")}
             </button>
@@ -177,7 +177,7 @@ export function MonthlyCalendar({ bookings }: MonthlyCalendarProps) {
               className="mb-3 flex flex-wrap items-center gap-2 rounded-xl border border-border bg-background/75 px-3 py-2"
             >
               <span className="text-xs text-muted-foreground">
-                {t("calendar.selected")}: <span className="font-medium text-foreground">{selectionLabel}</span>
+                {t("calendar.selected")}: <span className="text-foreground">{selectionLabel}</span>
               </span>
               <div className="ml-auto flex items-center gap-2">
                 <button
@@ -193,7 +193,7 @@ export function MonthlyCalendar({ bookings }: MonthlyCalendarProps) {
                 </button>
                 <Link
                   href={reserveHref}
-                  className="rounded-lg bg-primary px-3 py-1.5 text-xs font-medium text-primary-foreground hover:bg-primary/90"
+                  className="rounded-lg bg-primary px-3 py-1.5 text-xs text-primary-foreground hover:bg-primary/90"
                 >
                   {t("calendar.reserveSelected")}
                 </Link>
@@ -202,7 +202,7 @@ export function MonthlyCalendar({ bookings }: MonthlyCalendarProps) {
           )}
         </AnimatePresence>
 
-        <div className="grid grid-cols-7 gap-2 text-xs font-medium uppercase tracking-[0.12em] text-muted-foreground">
+        <div className="grid grid-cols-7 gap-2 text-xs uppercase tracking-[0.12em] text-muted-foreground">
           {weekdayLabels.map((day) => (
             <div key={day} className="px-2 py-1">
               {day}
@@ -256,7 +256,7 @@ export function MonthlyCalendar({ bookings }: MonthlyCalendarProps) {
                   inRange && "border-cyan-500/70 bg-cyan-500/10"
                 )}
               >
-                <div className="mb-2 text-xs font-medium">{format(day, "d")}</div>
+                <div className="mb-2 text-xs">{format(day, "d")}</div>
                 <div className="space-y-1.5">
                   {dayBookings.slice(0, 3).map((booking) => (
                     <button
@@ -268,10 +268,11 @@ export function MonthlyCalendar({ bookings }: MonthlyCalendarProps) {
                         event.stopPropagation();
                         setSelectedBooking(booking);
                       }}
-                      className="w-full truncate rounded-md border border-red-500/80 bg-red-600 px-2 py-1 text-left text-[11px] font-medium text-white transition-colors hover:bg-red-500"
+                      className="flex w-full items-center gap-1 truncate rounded-md border border-red-500/80 bg-red-600 px-2 py-1 text-left text-[11px] text-white transition-colors hover:bg-red-500"
                       title={booking.title}
                     >
-                      {format(parseISO(booking.start_time), "h:mm a", { locale: dateLocale })} {booking.title}
+                      <CalendarDays className="h-3 w-3 shrink-0 opacity-70" />
+                      <span className="truncate">{format(parseISO(booking.start_time), "h:mm a", { locale: dateLocale })} {booking.title}</span>
                     </button>
                   ))}
                   {dayBookings.length > 3 && (
@@ -308,13 +309,18 @@ export function MonthlyCalendar({ bookings }: MonthlyCalendarProps) {
             >
               <div className="w-full max-w-md rounded-2xl border border-border bg-card p-6 shadow-2xl">
                 <div className="mb-4 flex items-start justify-between gap-4">
-                  <div>
-                    <p className="text-xs uppercase tracking-[0.14em] text-muted-foreground">
-                      {t("calendar.bookingDetails")}
-                    </p>
-                    <h4 className="mt-1 text-lg font-semibold">
-                      {selectedBooking.title}
-                    </h4>
+                  <div className="flex items-start gap-3">
+                    <div className="grid h-9 w-9 shrink-0 place-items-center rounded-md bg-primary text-primary-foreground">
+                      <CalendarDays className="h-4 w-4" />
+                    </div>
+                    <div>
+                      <p className="text-xs uppercase tracking-[0.14em] text-muted-foreground">
+                        {t("calendar.bookingDetails")}
+                      </p>
+                      <h4 className="mt-1 text-lg">
+                        {selectedBooking.title}
+                      </h4>
+                    </div>
                   </div>
                   <button
                     type="button"
@@ -325,7 +331,7 @@ export function MonthlyCalendar({ bookings }: MonthlyCalendarProps) {
                   </button>
                 </div>
 
-                <div className="space-y-3 text-sm">
+                <div className="space-y-3 text-xs">
                   <div className="flex items-center gap-2 text-muted-foreground">
                     <Clock3 className="h-4 w-4" />
                     <span>
@@ -340,7 +346,7 @@ export function MonthlyCalendar({ bookings }: MonthlyCalendarProps) {
                   <div>
                     <span
                       className={cn(
-                        "inline-flex rounded-full px-2.5 py-1 text-xs font-medium capitalize",
+                        "inline-flex rounded-full px-2.5 py-1 text-xs capitalize",
                         selectedBooking.status === "approved"
                           ? "bg-green-500/15 text-green-700 dark:text-green-300"
                           : selectedBooking.status === "pending"

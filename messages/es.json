@@ -21,6 +21,8 @@
     "status": "Estado",
     "user": "Usuario",
     "admin": "Admin",
+    "edit": "Editar",
+    "save": "Guardar",
     "loading": "Cargando..."
   },
   "language": {
@@ -83,7 +85,21 @@
     "outOfTotalRooms": "De un total de {total} salas",
     "totalUsers": "Usuarios totales",
     "activeInOrganization": "Activos en la organización",
-    "monthlyBookingCalendar": "Calendario mensual de reservas"
+    "monthlyBookingCalendar": "Calendario mensual de reservas",
+    "pendingApprovals": "Aprobaciones pendientes",
+    "awaitingReview": "Pendiente de revisión",
+    "weeklyActivity": "Actividad semanal",
+    "weeklyActivityDesc": "Reservas aprobadas esta semana por día",
+    "roomUtilization": "Uso de salas",
+    "roomUtilizationDesc": "Ocupación actual",
+    "occupied": "Ocupadas",
+    "available": "Disponibles",
+    "bookingTrend": "Tendencia de reservas",
+    "bookingTrendDesc": "Aprobadas vs. pendientes en las últimas 4 semanas",
+    "recentBookings": "Reservas recientes",
+    "recentBookingsDesc": "Tu actividad reciente de reservas",
+    "noRecentBookings": "Aún no hay reservas.",
+    "viewAllBookings": "Ver todas las reservas"
   },
   "bookings": {
     "title": "Reservas",
@@ -251,7 +267,16 @@
     "placeholderFloorName": "Planta 1",
     "placeholderLevel": "1",
     "placeholderRoomName": "Sala Conferencia A",
-    "placeholderCapacity": "4"
+    "placeholderCapacity": "4",
+    "editRoom": "Editar sala",
+    "editRoomDescription": "Actualiza los detalles, imagen y equipamiento de la sala.",
+    "roomImage": "Imagen de la sala",
+    "amenities": "Equipamiento",
+    "roomUpdated": "Sala actualizada",
+    "imageUploaded": "Imagen subida",
+    "imageUploadFailed": "Error al subir la imagen",
+    "uploading": "Subiendo…",
+    "dropImageHint": "Arrastra y suelta una imagen, o haz clic para buscar"
   },
   "errors": {
     "generic": "Ocurrió un error",

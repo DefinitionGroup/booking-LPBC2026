@@ -78,3 +78,32 @@ export async function toggleRoomActive(id: string, isActive: boolean) {
   revalidatePath("/rooms");
   return { success: true, message: !isActive ? "Room activated" : "Room deactivated" };
 }
+
+export async function updateRoom(
+  id: string,
+  data: {
+    name: string;
+    capacity: number;
+    amenities: string[];
+    image_url: string | null;
+  }
+) {
+  const { supabase, error: authError } = await assertAdmin();
+  if (authError) return { success: false, message: authError };
+
+  const { error } = await supabase
+    .from("rooms")
+    .update({
+      name: data.name,
+      capacity: data.capacity,
+      amenities: data.amenities,
+      image_url: data.image_url,
+    })
+    .eq("id", id);
+
+  if (error) return { success: false, message: error.message };
+
+  revalidatePath("/admin/rooms");
+  revalidatePath("/rooms");
+  return { success: true };
+}

@@ -1,7 +1,11 @@
 import { updatePassword } from "../actions";
-import { Building2, ArrowLeft } from "lucide-react";
+import { Building2, ArrowLeft, Lock } from "lucide-react";
 import { getServerI18n } from "@/lib/i18n/server";
 import Link from "next/link";
+import { Card, CardContent } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Button } from "@/components/ui/button";
 
 export default async function ResetPasswordPage(props: {
   searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
@@ -11,67 +15,70 @@ export default async function ResetPasswordPage(props: {
   const { t } = await getServerI18n();
 
   return (
-    <div className="flex min-h-screen flex-col items-center justify-center bg-secondary/30 p-6">
+    <div className="flex min-h-screen flex-col items-center justify-center bg-background p-6">
       <div className="w-full max-w-sm space-y-6">
-        <div className="flex flex-col items-center gap-2 text-center">
-          <div className="h-10 w-10 rounded-lg bg-primary text-primary-foreground flex items-center justify-center">
+        <div className="flex flex-col items-center gap-3 text-center">
+          <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-primary text-primary-foreground">
             <Building2 className="h-6 w-6" />
           </div>
-          <h1 className="text-2xl font-bold tracking-tight">{t("auth.resetPasswordTitle")}</h1>
-          <p className="text-sm text-muted-foreground">{t("auth.resetPasswordSubtitle")}</p>
+          <div className="space-y-1">
+            <h1 className="text-2xl tracking-tight">{t("auth.resetPasswordTitle")}</h1>
+            <p className="text-xs text-muted-foreground">{t("auth.resetPasswordSubtitle")}</p>
+          </div>
         </div>
 
         {typeof error === "string" && (
-          <div className="rounded-md bg-destructive/15 p-3 text-sm text-destructive border border-destructive/20 text-center">
+          <div className="rounded-md bg-destructive/10 px-4 py-3 text-xs text-destructive">
             {error}
           </div>
         )}
 
-        <div className="rounded-xl border border-border bg-card p-6 shadow-sm">
-          <form className="flex flex-col gap-4">
-            <div className="space-y-2">
-              <label className="text-sm font-medium" htmlFor="password">
-                {t("auth.newPassword")}
-              </label>
-              <input
-                id="password"
-                name="password"
-                type="password"
-                required
-                minLength={6}
-                className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
-              />
+        <Card>
+          <CardContent>
+            <form className="flex flex-col gap-5">
+              <div className="space-y-2">
+                <Label htmlFor="password">{t("auth.newPassword")}</Label>
+                <div className="relative">
+                  <Lock className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+                  <Input
+                    id="password"
+                    name="password"
+                    type="password"
+                    required
+                    minLength={6}
+                    className="pl-9"
+                  />
+                </div>
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="confirmPassword">{t("auth.confirmPassword")}</Label>
+                <div className="relative">
+                  <Lock className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+                  <Input
+                    id="confirmPassword"
+                    name="confirmPassword"
+                    type="password"
+                    required
+                    minLength={6}
+                    className="pl-9"
+                  />
+                </div>
+              </div>
+              <Button type="submit" formAction={updatePassword} className="w-full">
+                {t("auth.updatePassword")}
+              </Button>
+            </form>
+            <div className="mt-4 text-center">
+              <Link
+                href="/login"
+                className="inline-flex items-center gap-1.5 text-xs text-muted-foreground transition-colors hover:text-foreground"
+              >
+                <ArrowLeft className="h-3.5 w-3.5" />
+                {t("auth.backToLogin")}
+              </Link>
             </div>
-            <div className="space-y-2">
-              <label className="text-sm font-medium" htmlFor="confirmPassword">
-                {t("auth.confirmPassword")}
-              </label>
-              <input
-                id="confirmPassword"
-                name="confirmPassword"
-                type="password"
-                required
-                minLength={6}
-                className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
-              />
-            </div>
-            <button
-              formAction={updatePassword}
-              className="w-full rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground hover:bg-primary/90"
-            >
-              {t("auth.updatePassword")}
-            </button>
-          </form>
-          <div className="mt-4 text-center">
-            <Link
-              href="/login"
-              className="inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground"
-            >
-              <ArrowLeft className="h-3 w-3" />
-              {t("auth.backToLogin")}
-            </Link>
-          </div>
-        </div>
+          </CardContent>
+        </Card>
       </div>
     </div>
   );

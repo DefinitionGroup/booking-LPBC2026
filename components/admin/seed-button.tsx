@@ -33,7 +33,7 @@ export function SeedButton() {
     <button
       onClick={handleSeed}
       disabled={isLoading}
-      className="flex items-center gap-2 rounded-md bg-secondary border border-border px-3 py-2 text-sm font-medium text-secondary-foreground transition-all hover:bg-secondary/80 hover:shadow-sm disabled:opacity-50 disabled:cursor-not-allowed"
+      className="flex items-center gap-2 rounded-md bg-secondary border border-border px-3 py-2 text-xs text-secondary-foreground transition-all hover:bg-secondary/80 hover:shadow-sm disabled:opacity-50 disabled:cursor-not-allowed"
     >
       {isLoading ? (
         <Loader2 className="h-4 w-4 animate-spin" />

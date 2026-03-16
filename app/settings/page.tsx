@@ -12,17 +12,17 @@ export default async function SettingsPage() {
         <ShellWrapper>
             <div className="space-y-6">
                 <div>
-                    <h1 className="text-3xl font-bold tracking-tight">{t("settings.title")}</h1>
+                    <h1 className="text-3xl tracking-tight">{t("settings.title")}</h1>
                     <p className="text-muted-foreground">{t("settings.subtitle")}</p>
                 </div>
 
                 <div className="grid gap-6">
                     {/* Appearance Section (New) */}
-                    <div className="rounded-xl border border-border bg-card p-6 shadow-sm">
-                        <h2 className="text-lg font-semibold mb-4">{t("settings.appearance")}</h2>
+                    <div className="rounded-lg bg-card p-6 shadow-sm">
+                        <h2 className="text-lg mb-4">{t("settings.appearance")}</h2>
                         <div className="flex items-center justify-between">
                             <div>
-                                <p className="text-sm font-medium">{t("settings.interfaceTheme")}</p>
+                                <p className="text-xs">{t("settings.interfaceTheme")}</p>
                                 <p className="text-xs text-muted-foreground">{t("settings.appearanceDescription")}</p>
                             </div>
                             <ModeToggle />
@@ -31,13 +31,13 @@ export default async function SettingsPage() {
 
                     {/* Profile Section */}
                     <div className="rounded-xl border border-border bg-card p-6 shadow-sm">
-                        <h2 className="text-lg font-semibold mb-4">{t("settings.profile")}</h2>
+                        <h2 className="text-lg mb-4">{t("settings.profile")}</h2>
                         <div className="grid gap-4 max-w-md">
                             <div className="grid gap-2">
-                                <label className="text-sm font-medium">{t("auth.email")}</label>
+                                <label className="text-xs">{t("auth.email")}</label>
                                 <input
                                     disabled
-                                    className="flex h-10 w-full rounded-md border border-input bg-muted px-3 py-2 text-sm opacity-50 cursor-not-allowed"
+                                    className="flex h-10 w-full rounded-md border border-border/40 bg-muted px-3 py-2 text-xs opacity-50 cursor-not-allowed"
                                     value={user?.email || ""}
                                 />
                                 <p className="text-xs text-muted-foreground">
@@ -48,11 +48,11 @@ export default async function SettingsPage() {
                     </div>
 
                     {/* Notifications Section Placeholder */}
-                    <div className="rounded-xl border border-border bg-card p-6 shadow-sm">
-                        <h2 className="text-lg font-semibold mb-4">{t("settings.notifications")}</h2>
+                    <div className="rounded-lg bg-card p-6 shadow-sm">
+                        <h2 className="text-lg mb-4">{t("settings.notifications")}</h2>
                         <div className="flex items-center space-x-2">
                             <input type="checkbox" id="email-notifs" className="rounded border-gray-300" defaultChecked />
-                            <label htmlFor="email-notifs" className="text-sm">{t("settings.receiveEmails")}</label>
+                            <label htmlFor="email-notifs" className="text-xs">{t("settings.receiveEmails")}</label>
                         </div>
                     </div>
                 </div>

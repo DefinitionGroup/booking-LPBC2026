@@ -19,19 +19,19 @@ export default async function BookingsPage() {
         <ShellWrapper>
             <div className="flex flex-col gap-6">
                 <div className="flex items-center justify-between">
-                    <h1 className="text-3xl font-bold tracking-tight">{t("bookings.title")}</h1>
+                    <h1 className="text-3xl tracking-tight">{t("bookings.title")}</h1>
                     <Link
                         href="/bookings/new"
-                        className="inline-flex items-center gap-2 rounded-lg bg-primary px-4 py-2 text-sm font-medium text-primary-foreground hover:bg-primary/90 transition-colors shadow-sm"
+                        className="inline-flex items-center gap-2 rounded-md bg-primary px-4 py-2 text-xs text-primary-foreground hover:bg-primary/90 transition-colors shadow-sm"
                     >
                         <Plus className="h-4 w-4" />
                         {t("common.newBooking")}
                     </Link>
                 </div>
 
-                <div className="rounded-xl border border-border bg-card shadow-sm overflow-hidden">
-                    <table className="w-full text-sm text-left">
-                        <thead className="bg-secondary text-muted-foreground font-medium border-b border-border">
+                <div className="rounded-lg bg-card shadow-sm overflow-hidden">
+                    <table className="w-full text-xs text-left">
+                        <thead className="bg-secondary/50 text-muted-foreground border-b border-border/30">
                             <tr>
                                 <th className="px-6 py-3">{t("bookings.tableTitle")}</th>
                                 <th className="px-6 py-3">{t("bookings.room")}</th>
@@ -44,7 +44,7 @@ export default async function BookingsPage() {
                             {bookings && bookings.length > 0 ? (
                                 bookings.map((booking) => (
                                     <tr key={booking.id} className="hover:bg-muted/50 transition-colors">
-                                        <td className="px-6 py-4 font-medium">{booking.title}</td>
+                                        <td className="px-6 py-4">{booking.title}</td>
                                         <td className="px-6 py-4">{booking.rooms?.name || t("calendar.unknownRoom")}</td>
                                         <td className="px-6 py-4 text-muted-foreground">{booking.profiles?.email || t("common.user")}</td>
                                         <td className="px-6 py-4">
@@ -56,7 +56,7 @@ export default async function BookingsPage() {
                                             </div>
                                         </td>
                                         <td className="px-6 py-4">
-                                            <span className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium capitalize
+                                            <span className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs capitalize
                                         ${booking.status === 'approved' ? 'bg-green-500/10 text-green-700' :
                                                     booking.status === 'pending' ? 'bg-yellow-500/10 text-yellow-700' :
                                                         'bg-red-500/10 text-red-700'}`}

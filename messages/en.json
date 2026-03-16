@@ -21,6 +21,8 @@
     "status": "Status",
     "user": "User",
     "admin": "Admin",
+    "edit": "Edit",
+    "save": "Save",
     "loading": "Loading..."
   },
   "language": {
@@ -83,7 +85,21 @@
     "outOfTotalRooms": "Out of {total} total rooms",
     "totalUsers": "Total Users",
     "activeInOrganization": "Active in organization",
-    "monthlyBookingCalendar": "Monthly Booking Calendar"
+    "monthlyBookingCalendar": "Monthly Booking Calendar",
+    "pendingApprovals": "Pending Approvals",
+    "awaitingReview": "Awaiting admin review",
+    "weeklyActivity": "Weekly Activity",
+    "weeklyActivityDesc": "Approved bookings this week by day",
+    "roomUtilization": "Room Utilization",
+    "roomUtilizationDesc": "Current occupancy snapshot",
+    "occupied": "Occupied",
+    "available": "Available",
+    "bookingTrend": "Booking Trend",
+    "bookingTrendDesc": "Approved vs. pending over the last 4 weeks",
+    "recentBookings": "Recent Bookings",
+    "recentBookingsDesc": "Your latest booking activity",
+    "noRecentBookings": "No bookings yet.",
+    "viewAllBookings": "View all bookings"
   },
   "bookings": {
     "title": "Bookings",
@@ -251,7 +267,16 @@
     "placeholderFloorName": "Level 1",
     "placeholderLevel": "1",
     "placeholderRoomName": "Conference A",
-    "placeholderCapacity": "4"
+    "placeholderCapacity": "4",
+    "editRoom": "Edit Room",
+    "editRoomDescription": "Update room details, image, and amenities.",
+    "roomImage": "Room Image",
+    "amenities": "Amenities",
+    "roomUpdated": "Room updated",
+    "imageUploaded": "Image uploaded",
+    "imageUploadFailed": "Image upload failed",
+    "uploading": "Uploading…",
+    "dropImageHint": "Drag and drop an image, or click to browse"
   },
   "errors": {
     "generic": "An error occurred",

@@ -13,25 +13,25 @@ export default async function DebugAuthPage() {
     .single() : { data: null, error: null };
 
   return (
-    <div className="p-8 font-mono text-sm">
-      <h1 className="text-xl font-bold mb-4">{t("debug.title")}</h1>
+    <div className="p-8 font-mono text-xs">
+      <h1 className="text-xl mb-4">{t("debug.title")}</h1>
 
       <div className="space-y-4">
         <div className="border p-4 rounded bg-muted/50">
-          <h2 className="font-bold mb-2">{t("debug.userSession")}</h2>
+          <h2 className="mb-2">{t("debug.userSession")}</h2>
           {user ? (
             <pre className="whitespace-pre-wrap text-green-600 overflow-auto">
               {t("debug.idLabel")}: {user.id}
               {t("auth.email")}: {user.email}
             </pre>
           ) : (
-            <div className="text-red-500 font-bold">{t("debug.noUserSession")}</div>
+            <div className="text-red-500">{t("debug.noUserSession")}</div>
           )}
           {error && <div className="text-red-500 mt-2">{t("debug.errorPrefix")}: {error.message}</div>}
         </div>
 
         <div className="border p-4 rounded bg-muted/50">
-          <h2 className="font-bold mb-2">{t("debug.profileData")}</h2>
+          <h2 className="mb-2">{t("debug.profileData")}</h2>
           {profile ? (
             <pre className="whitespace-pre-wrap text-blue-600 overflow-auto">
               {JSON.stringify(profile, null, 2)}

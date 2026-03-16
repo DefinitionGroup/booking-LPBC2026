@@ -31,7 +31,7 @@ export function UserNavClient({ user, role }: { user: User; role?: string }) {
                 <Link
                     href={isAdminRoute ? "/" : "/admin"}
                     className={cn(
-                        "inline-flex h-9 items-center gap-2 rounded-xl border px-3 text-sm font-medium transition-colors",
+                        "inline-flex h-9 items-center gap-2 rounded-xl border px-3 text-xs transition-colors",
                         isAdminRoute
                             ? "border-border bg-background/80 text-foreground hover:bg-muted/70"
                             : "border-transparent bg-primary/12 text-primary hover:bg-primary/20"
@@ -42,15 +42,15 @@ export function UserNavClient({ user, role }: { user: User; role?: string }) {
                 </Link>
             )}
 
-            <div className="flex items-center gap-3 rounded-xl border border-border/70 bg-background/78 px-3 py-1.5 backdrop-blur-sm">
+            <div className="flex items-center gap-3 rounded-md bg-muted/40 px-3 py-1.5">
                 <div className="flex flex-col items-end">
-                    <span className="max-w-[160px] truncate text-xs font-medium leading-none">{user.email}</span>
+                    <span className="max-w-[160px] truncate text-xs leading-none">{user.email}</span>
                     <span className="text-[10px] text-muted-foreground capitalize">
                         {role === "admin" ? t("roles.admin") : t("roles.user")}
                     </span>
                 </div>
 
-                <div className="h-8 w-8 rounded-full bg-primary/95 flex items-center justify-center text-xs font-medium text-primary-foreground uppercase">
+                <div className="h-8 w-8 rounded-full bg-primary/95 flex items-center justify-center text-xs text-primary-foreground uppercase">
                     {user.email?.[0]}
                 </div>
 

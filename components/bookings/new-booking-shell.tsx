@@ -38,7 +38,7 @@ export function NewBookingShell({
       <motion.div variants={fadeUp} transition={{ delay: 0.05 }}>
         <Link
           href={backHref}
-          className="mb-4 inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors"
+          className="mb-4 inline-flex items-center gap-2 text-xs text-muted-foreground hover:text-foreground transition-colors"
         >
           <ArrowLeft className="h-4 w-4" />
           {backLabel}
@@ -58,8 +58,8 @@ export function NewBookingShell({
             <Sparkles className="h-3.5 w-3.5" />
             {t("bookings.fastBookingFlow")}
           </div>
-          <h1 className="mt-3 text-3xl font-semibold tracking-tight">{t("bookings.newBookingRequest")}</h1>
-          <p className="mt-1 text-sm text-muted-foreground">
+          <h1 className="mt-3 text-3xl tracking-tight">{t("bookings.newBookingRequest")}</h1>
+          <p className="mt-1 text-xs text-muted-foreground">
             {t("bookings.bookingFlowSubtitle")}
           </p>
         </div>

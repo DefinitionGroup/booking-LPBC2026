@@ -68,7 +68,7 @@ export default async function AdminUsersPage() {
     <div className="space-y-6">
       <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">{t("admin.usersTitle")}</h1>
+          <h1 className="text-3xl tracking-tight">{t("admin.usersTitle")}</h1>
           <p className="text-muted-foreground">{t("admin.usersSubtitle")}</p>
         </div>
 
@@ -79,7 +79,7 @@ export default async function AdminUsersPage() {
       </div>
 
       {serviceRoleError && (
-        <div className="rounded-xl border border-amber-500/30 bg-amber-500/10 px-4 py-3 text-sm text-amber-900 dark:text-amber-100">
+        <div className="rounded-md bg-amber-500/10 px-4 py-3 text-xs text-amber-900 dark:text-amber-100">
           {t("admin.serviceRoleRequired")}
         </div>
       )}
@@ -87,22 +87,22 @@ export default async function AdminUsersPage() {
       <div className="grid gap-6 xl:grid-cols-[0.9fr_1.4fr]">
         <section className="rounded-xl border border-border bg-card shadow-sm overflow-hidden">
           <div className="border-b border-border px-5 py-4">
-            <h2 className="text-lg font-semibold">{t("admin.companiesTitle")}</h2>
-            <p className="text-sm text-muted-foreground">{t("admin.companiesSubtitle")}</p>
+            <h2 className="text-lg">{t("admin.companiesTitle")}</h2>
+            <p className="text-xs text-muted-foreground">{t("admin.companiesSubtitle")}</p>
           </div>
           <div className="overflow-x-auto">
-            <table className="w-full min-w-[420px] text-sm">
+            <table className="w-full min-w-[420px] text-xs">
               <thead className="bg-muted/50 text-left">
                 <tr>
-                  <th className="p-4 font-medium">{t("admin.companyName")}</th>
-                  <th className="p-4 font-medium">{t("admin.companyDomain")}</th>
+                  <th className="p-4">{t("admin.companyName")}</th>
+                  <th className="p-4">{t("admin.companyDomain")}</th>
                 </tr>
               </thead>
               <tbody>
                 {companies.length > 0 ? (
                   companies.map((company) => (
                     <tr key={company.id} className="border-t">
-                      <td className="p-4 font-medium">{company.name}</td>
+                      <td className="p-4">{company.name}</td>
                       <td className="p-4 text-muted-foreground">{company.domain || t("admin.noDomain")}</td>
                     </tr>
                   ))
@@ -118,33 +118,33 @@ export default async function AdminUsersPage() {
           </div>
         </section>
 
-        <section className="rounded-xl border border-border bg-card shadow-sm overflow-hidden">
-          <div className="border-b border-border px-5 py-4">
-            <h2 className="text-lg font-semibold">{t("admin.userDirectory")}</h2>
-            <p className="text-sm text-muted-foreground">{t("admin.userDirectorySubtitle")}</p>
+        <section className="rounded-lg bg-card shadow-sm overflow-hidden">
+          <div className="border-b border-border/30 px-5 py-4">
+            <h2 className="text-lg">{t("admin.userDirectory")}</h2>
+            <p className="text-xs text-muted-foreground">{t("admin.userDirectorySubtitle")}</p>
           </div>
           <div className="overflow-x-auto">
-            <table className="w-full min-w-[760px] text-sm">
+            <table className="w-full min-w-[760px] text-xs">
               <thead className="bg-muted/50 text-left">
                 <tr>
-                  <th className="p-4 font-medium">{t("admin.fullName")}</th>
-                  <th className="p-4 font-medium">{t("auth.email")}</th>
-                  <th className="p-4 font-medium">{t("admin.company")}</th>
-                  <th className="p-4 font-medium">{t("admin.userRole")}</th>
+                  <th className="p-4">{t("admin.fullName")}</th>
+                  <th className="p-4">{t("auth.email")}</th>
+                  <th className="p-4">{t("admin.company")}</th>
+                  <th className="p-4">{t("admin.userRole")}</th>
                 </tr>
               </thead>
               <tbody>
                 {enrichedProfiles.length > 0 ? (
                   enrichedProfiles.map((profile) => (
                     <tr key={profile.id} className="border-t">
-                      <td className="p-4 font-medium">{profile.full_name || t("admin.noName")}</td>
+                      <td className="p-4">{profile.full_name || t("admin.noName")}</td>
                       <td className="p-4 text-muted-foreground">
                         {profile.email}
                         {profile.id === user?.id ? ` (${t("admin.currentUser")})` : ""}
                       </td>
                       <td className="p-4 text-muted-foreground">{profile.companyName}</td>
                       <td className="p-4">
-                        <span className="inline-flex rounded-full bg-muted px-2.5 py-1 text-xs font-medium">
+                        <span className="inline-flex rounded-full bg-muted px-2.5 py-1 text-xs">
                           {profile.role === "admin" ? t("roles.admin") : t("roles.user")}
                         </span>
                       </td>

@@ -22,7 +22,7 @@ export function ModeToggle({ compact = false }: ModeToggleProps) {
   return (
     <div
       className={cn(
-        "flex items-center rounded-xl border border-border bg-card/80 backdrop-blur-sm p-1",
+        "flex items-center rounded-md bg-muted/40 p-1",
         compact ? "gap-1" : "gap-2"
       )}
     >
@@ -37,7 +37,7 @@ export function ModeToggle({ compact = false }: ModeToggleProps) {
             aria-label={option.label}
             title={option.label}
             className={cn(
-              "rounded-lg text-sm font-medium transition-colors hover:bg-muted hover:text-foreground",
+              "rounded-md text-xs transition-colors hover:bg-muted hover:text-foreground",
               compact
                 ? "grid h-8 w-8 place-items-center"
                 : "flex items-center gap-2 px-3 py-1.5",

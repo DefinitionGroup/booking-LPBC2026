@@ -90,9 +90,9 @@ export function CreateRoomButton({ buildings, floors }: CreateRoomButtonProps) {
       >
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
           <div className="space-y-2">
-            <label className="text-sm font-medium">{t("admin.building")}</label>
+            <label className="text-xs">{t("admin.building")}</label>
             <select
-              className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+              className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-xs ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
               {...register("building_id")}
               onChange={(e) => {
                 register("building_id").onChange(e); // Maintain hook form state
@@ -104,13 +104,13 @@ export function CreateRoomButton({ buildings, floors }: CreateRoomButtonProps) {
                 <option key={b.id} value={b.id}>{b.name}</option>
               ))}
             </select>
-            {errors.building_id && <p className="text-sm text-red-500">{getErrorMessage(errors.building_id.message)}</p>}
+            {errors.building_id && <p className="text-xs text-red-500">{getErrorMessage(errors.building_id.message)}</p>}
           </div>
 
           <div className="space-y-2">
-            <label className="text-sm font-medium">{t("admin.floor")}</label>
+            <label className="text-xs">{t("admin.floor")}</label>
             <select
-              className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+              className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-xs ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
               {...register("floor_id")}
               disabled={!selectedBuildingId}
             >
@@ -119,26 +119,26 @@ export function CreateRoomButton({ buildings, floors }: CreateRoomButtonProps) {
                 <option key={f.id} value={f.id}>{f.name}</option>
               ))}
             </select>
-            {errors.floor_id && <p className="text-sm text-red-500">{getErrorMessage(errors.floor_id.message)}</p>}
+            {errors.floor_id && <p className="text-xs text-red-500">{getErrorMessage(errors.floor_id.message)}</p>}
           </div>
 
           <div className="space-y-2">
-            <label className="text-sm font-medium">{t("admin.name")}</label>
+            <label className="text-xs">{t("admin.name")}</label>
             <Input
               placeholder={t("admin.placeholderRoomName")}
               {...register("name")}
             />
-            {errors.name && <p className="text-sm text-red-500">{getErrorMessage(errors.name.message)}</p>}
+            {errors.name && <p className="text-xs text-red-500">{getErrorMessage(errors.name.message)}</p>}
           </div>
 
           <div className="space-y-2">
-            <label className="text-sm font-medium">{t("admin.capacity")}</label>
+            <label className="text-xs">{t("admin.capacity")}</label>
             <Input
               type="number"
               placeholder={t("admin.placeholderCapacity")}
               {...register("capacity")}
             />
-            {errors.capacity && <p className="text-sm text-red-500">{getErrorMessage(errors.capacity.message)}</p>}
+            {errors.capacity && <p className="text-xs text-red-500">{getErrorMessage(errors.capacity.message)}</p>}
           </div>
 
           <div className="flex justify-end pt-4 gap-2">

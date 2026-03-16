@@ -11,18 +11,18 @@ export default async function AdminBuildingsPage() {
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
-        <h1 className="text-3xl font-bold tracking-tight">{t("admin.buildingsTitle")}</h1>
+        <h1 className="text-3xl tracking-tight">{t("admin.buildingsTitle")}</h1>
         <CreateBuildingButton />
       </div>
 
       <div className="rounded-md border overflow-hidden">
         <div className="overflow-x-auto">
-          <table className="w-full min-w-[640px] text-sm">
+          <table className="w-full min-w-[640px] text-xs">
             <thead className="bg-muted/50 text-left">
               <tr>
-                <th className="p-4 font-medium">{t("admin.name")}</th>
-                <th className="p-4 font-medium">{t("admin.address")}</th>
-                <th className="p-4 font-medium text-right">{t("common.actions")}</th>
+                <th className="p-4">{t("admin.name")}</th>
+                <th className="p-4">{t("admin.address")}</th>
+                <th className="p-4 text-right">{t("common.actions")}</th>
               </tr>
             </thead>
             <tbody>

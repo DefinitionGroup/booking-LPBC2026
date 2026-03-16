@@ -172,34 +172,34 @@ export function BookingForm({
       animate="show"
     >
       <motion.div variants={item} className="space-y-2">
-        <label className="text-sm font-medium">{t("bookings.meetingTitle")}</label>
+        <label className="text-xs">{t("bookings.meetingTitle")}</label>
         <input
           {...register("title")}
           className={cn(
-            "flex h-10 w-full rounded-xl border border-input bg-background/88 px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
+            "flex h-10 w-full rounded-md border border-border/60 bg-background px-3 py-2 text-xs ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/40 focus-visible:ring-offset-0",
             errors.title && "border-destructive focus-visible:ring-destructive"
           )}
           placeholder={t("bookings.titlePlaceholder")}
         />
-        {errors.title && <p className="text-sm text-destructive">{getErrorMessage(errors.title.message)}</p>}
+        {errors.title && <p className="text-xs text-destructive">{getErrorMessage(errors.title.message)}</p>}
       </motion.div>
 
       <motion.div variants={item} className="grid grid-cols-1 gap-4 sm:grid-cols-2">
         <div className="space-y-2">
-          <label className="text-sm font-medium">{t("bookings.date")}</label>
+          <label className="text-xs">{t("bookings.date")}</label>
           <input
             type="date"
             {...register("date")}
-            className="flex h-10 w-full rounded-xl border border-input bg-background/88 px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+            className="flex h-10 w-full rounded-md border border-border/60 bg-background px-3 py-2 text-xs ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/40 focus-visible:ring-offset-0"
           />
-          {errors.date && <p className="text-sm text-destructive">{getErrorMessage(errors.date.message)}</p>}
+          {errors.date && <p className="text-xs text-destructive">{getErrorMessage(errors.date.message)}</p>}
         </div>
 
         <div className="space-y-2">
-          <label className="text-sm font-medium">{t("bookings.startTime")}</label>
+          <label className="text-xs">{t("bookings.startTime")}</label>
           <select
             {...register("time")}
-            className="flex h-10 w-full rounded-xl border border-input bg-background/88 px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+            className="flex h-10 w-full rounded-md border border-border/60 bg-background px-3 py-2 text-xs ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/40"
           >
             {timeOptions.map((option) => (
               <option key={option.value} value={option.value}>
@@ -207,14 +207,14 @@ export function BookingForm({
               </option>
             ))}
           </select>
-          {errors.time && <p className="text-sm text-destructive">{getErrorMessage(errors.time.message)}</p>}
+          {errors.time && <p className="text-xs text-destructive">{getErrorMessage(errors.time.message)}</p>}
         </div>
       </motion.div>
 
-      <motion.div variants={item} className="rounded-xl border border-border bg-background/60 p-4">
+      <motion.div variants={item} className="rounded-md bg-muted/40 p-4">
         <div className="mb-2 flex items-center justify-between gap-3">
-          <label className="text-sm font-medium">{t("bookings.duration")}</label>
-          <div className="inline-flex items-center gap-2 rounded-lg border border-border px-2 py-1 text-xs text-muted-foreground">
+          <label className="text-xs">{t("bookings.duration")}</label>
+          <div className="inline-flex items-center gap-2 rounded-md bg-muted/60 px-2 py-1 text-xs text-muted-foreground">
             <Timer className="h-3.5 w-3.5" />
             {Math.floor(durationMinutes / 60)}h {durationMinutes % 60}m
           </div>
@@ -245,10 +245,10 @@ export function BookingForm({
                 })
               }
               className={cn(
-                "rounded-lg border px-2.5 py-1 text-xs transition-colors",
+                "rounded-md border px-2.5 py-1 text-xs transition-colors",
                 durationMinutes === minutes
-                  ? "border-primary bg-primary/10 text-primary"
-                  : "border-border text-muted-foreground hover:text-foreground"
+                  ? "border-primary/40 bg-primary/10 text-primary"
+                  : "border-transparent text-muted-foreground hover:text-foreground hover:bg-muted/60"
               )}
             >
               {minutes < 60 ? `${minutes}m` : `${minutes / 60}h`}
@@ -269,19 +269,19 @@ export function BookingForm({
                 shouldValidate: true,
               })
             }
-            className="h-9 w-24 rounded-lg border border-input bg-background px-2 py-1 text-sm"
+            className="h-9 w-24 rounded-md border border-border/60 bg-background px-2 py-1 text-xs"
           />
         </div>
         {errors.durationMinutes && (
-          <p className="mt-2 text-sm text-destructive">{getErrorMessage(errors.durationMinutes.message)}</p>
+          <p className="mt-2 text-xs text-destructive">{getErrorMessage(errors.durationMinutes.message)}</p>
         )}
       </motion.div>
 
-      <motion.div variants={item} className="rounded-xl border border-border bg-background/55 px-3 py-2 text-sm">
+      <motion.div variants={item} className="rounded-md bg-muted/30 px-3 py-2 text-xs">
         {preview ? (
           <span className="text-muted-foreground">
             {t("bookings.endsAt")}{" "}
-            <span className="font-medium text-foreground">
+            <span className="text-foreground">
               {format(preview.end, "EEE, MMM d • h:mm a", { locale: dateLocale })}
             </span>
           </span>
@@ -291,10 +291,10 @@ export function BookingForm({
       </motion.div>
 
       <motion.div variants={item} className="space-y-2">
-        <label className="text-sm font-medium">{t("bookings.room")}</label>
+        <label className="text-xs">{t("bookings.room")}</label>
         <select
           {...register("roomId")}
-          className="flex h-10 w-full rounded-xl border border-input bg-background/88 px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+          className="flex h-10 w-full rounded-md border border-border/60 bg-background px-3 py-2 text-xs ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/40"
         >
           <option value="" disabled>
             {t("bookings.selectRoom")}
@@ -305,14 +305,14 @@ export function BookingForm({
             </option>
           ))}
         </select>
-        {errors.roomId && <p className="text-sm text-destructive">{getErrorMessage(errors.roomId.message)}</p>}
+        {errors.roomId && <p className="text-xs text-destructive">{getErrorMessage(errors.roomId.message)}</p>}
       </motion.div>
 
       <motion.div variants={item} className="space-y-2">
-        <label className="text-sm font-medium">{t("bookings.recurrence")}</label>
+        <label className="text-xs">{t("bookings.recurrence")}</label>
         <select
           {...register("recurrence")}
-          className="flex h-10 w-full rounded-xl border border-input bg-background/88 px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+          className="flex h-10 w-full rounded-md border border-border/60 bg-background px-3 py-2 text-xs ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/40"
         >
           <option value="none">{t("bookings.doesNotRepeat")}</option>
           <option value="daily">{t("bookings.daily")}</option>
@@ -324,7 +324,7 @@ export function BookingForm({
         <button
           type="submit"
           disabled={isSubmitting}
-          className="inline-flex h-11 w-full items-center justify-center rounded-xl bg-primary px-4 py-2 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90 disabled:pointer-events-none disabled:opacity-50"
+          className="inline-flex h-11 w-full items-center justify-center rounded-md bg-primary px-4 py-2 text-xs text-primary-foreground transition-colors hover:bg-primary/90 disabled:pointer-events-none disabled:opacity-50"
         >
           {isSubmitting ? (
             <>

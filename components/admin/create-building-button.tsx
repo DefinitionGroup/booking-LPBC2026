@@ -69,23 +69,23 @@ export function CreateBuildingButton() {
       >
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
           <div className="space-y-2">
-            <label htmlFor="name" className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">{t("admin.name")}</label>
+            <label htmlFor="name" className="text-xs leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">{t("admin.name")}</label>
             <Input
               id="name"
               placeholder={t("admin.placeholderBuildingName")}
               {...register("name")}
             />
-            {errors.name && <p className="text-sm text-red-500">{getErrorMessage(errors.name.message)}</p>}
+            {errors.name && <p className="text-xs text-red-500">{getErrorMessage(errors.name.message)}</p>}
           </div>
 
           <div className="space-y-2">
-            <label htmlFor="address" className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">{t("admin.address")}</label>
+            <label htmlFor="address" className="text-xs leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">{t("admin.address")}</label>
             <Input
               id="address"
               placeholder={t("admin.placeholderAddress")}
               {...register("address")}
             />
-            {errors.address && <p className="text-sm text-red-500">{getErrorMessage(errors.address.message)}</p>}
+            {errors.address && <p className="text-xs text-red-500">{getErrorMessage(errors.address.message)}</p>}
           </div>
 
           <div className="flex justify-end pt-4 gap-2">

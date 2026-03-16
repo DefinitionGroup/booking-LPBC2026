@@ -24,43 +24,57 @@ export default async function AdminRoomsPage() {
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
-        <h1 className="text-3xl font-bold tracking-tight">{t("admin.roomsTitle")}</h1>
+        <h1 className="text-3xl tracking-tight">{t("admin.roomsTitle")}</h1>
         <CreateRoomButton buildings={buildings || []} floors={floors || []} />
       </div>
 
       <div className="rounded-md border overflow-hidden">
         <div className="overflow-x-auto">
-          <table className="w-full min-w-[900px] text-sm">
+          <table className="w-full min-w-[900px] text-xs">
             <thead className="bg-muted/50 text-left">
               <tr>
-                <th className="p-4 font-medium">{t("admin.name")}</th>
-                <th className="p-4 font-medium">{t("admin.location")}</th>
-                <th className="p-4 font-medium">{t("admin.capacity")}</th>
-                <th className="p-4 font-medium">{t("common.status")}</th>
-                <th className="p-4 font-medium text-right">{t("common.actions")}</th>
+                <th className="p-4">{t("admin.name")}</th>
+                <th className="p-4">{t("admin.location")}</th>
+                <th className="p-4">{t("admin.capacity")}</th>
+                <th className="p-4">{t("admin.amenities")}</th>
+                <th className="p-4">{t("common.status")}</th>
+                <th className="p-4 text-right">{t("common.actions")}</th>
               </tr>
             </thead>
             <tbody>
               {(rooms || []).map((room) => (
                 <tr key={room.id} className="border-t">
-                  <td className="p-4 font-medium">{room.name}</td>
+                  <td className="p-4">{room.name}</td>
                   <td className="p-4 text-muted-foreground">
                     {room.floors?.buildings?.name} - {room.floors?.name}
                   </td>
                   <td className="p-4 text-muted-foreground">{room.capacity}</td>
+                  <td className="p-4 text-muted-foreground">
+                    {room.amenities && room.amenities.length > 0
+                      ? room.amenities.join(", ")
+                      : "—"}
+                  </td>
                   <td className="p-4">
                     <span className={`px-2 py-1 rounded-full text-xs ${room.is_active ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}`}>
                       {room.is_active ? t("admin.active") : t("admin.inactive")}
                     </span>
                   </td>
                   <td className="p-4 text-right">
-                    <RoomRowActions id={room.id} name={room.name} isActive={room.is_active} />
+                    <RoomRowActions
+                      id={room.id}
+                      name={room.name}
+                      isActive={room.is_active}
+                      capacity={room.capacity}
+                      amenities={room.amenities}
+                      image_url={room.image_url}
+                      floor_id={room.floor_id}
+                    />
                   </td>
                 </tr>
               ))}
               {(!rooms || rooms.length === 0) && (
                 <tr>
-                  <td colSpan={5} className="p-8 text-center text-muted-foreground">
+                  <td colSpan={6} className="p-8 text-center text-muted-foreground">
                     {t("admin.noRoomsFound")}
                   </td>
                 </tr>

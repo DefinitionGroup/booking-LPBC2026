@@ -68,7 +68,7 @@ export function CreateCompanyButton() {
       >
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
           <div className="space-y-2">
-            <label className="text-sm font-medium" htmlFor="company-name">
+            <label className="text-xs" htmlFor="company-name">
               {t("admin.companyName")}
             </label>
             <Input
@@ -76,11 +76,11 @@ export function CreateCompanyButton() {
               placeholder={t("admin.placeholderCompanyName")}
               {...register("name")}
             />
-            {errors.name && <p className="text-sm text-red-500">{getErrorMessage(errors.name.message)}</p>}
+            {errors.name && <p className="text-xs text-red-500">{getErrorMessage(errors.name.message)}</p>}
           </div>
 
           <div className="space-y-2">
-            <label className="text-sm font-medium" htmlFor="company-domain">
+            <label className="text-xs" htmlFor="company-domain">
               {t("admin.companyDomain")}
             </label>
             <Input
