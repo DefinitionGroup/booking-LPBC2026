@@ -2,17 +2,40 @@ import { type NextRequest, NextResponse } from "next/server";
 import { updateSession } from "@/lib/supabase/middleware";
 
 export async function proxy(request: NextRequest) {
-    // If an auth code lands on a page that isn't the callback, forward it there.
-    // This handles Supabase stripping the path from the redirect URL,
-    // sending the user to e.g. /?code=XXX instead of /auth/callback?code=XXX.
+    // If auth params land on the wrong path, forward them to the callback route.
+    // Supabase can redirect to the site root with auth params attached.
     const code = request.nextUrl.searchParams.get("code");
-    if (code && !request.nextUrl.pathname.startsWith("/auth/callback")) {
+    const tokenHash = request.nextUrl.searchParams.get("token_hash");
+
+    if ((code || tokenHash) && !request.nextUrl.pathname.startsWith("/auth/callback")) {
         const url = request.nextUrl.clone();
         url.pathname = "/auth/callback";
         const next = request.nextUrl.searchParams.get("next");
-        url.search = next
-            ? `?code=${encodeURIComponent(code)}&next=${encodeURIComponent(next)}`
-            : `?code=${encodeURIComponent(code)}`;
+        const type = request.nextUrl.searchParams.get("type");
+        const flow = request.nextUrl.searchParams.get("flow");
+        const params = new URLSearchParams();
+
+        if (code) {
+            params.set("code", code);
+        }
+
+        if (tokenHash) {
+            params.set("token_hash", tokenHash);
+        }
+
+        if (type) {
+            params.set("type", type);
+        }
+
+        if (next) {
+            params.set("next", next);
+        }
+
+        if (flow) {
+            params.set("flow", flow);
+        }
+
+        url.search = params.toString();
         return NextResponse.redirect(url);
     }
 

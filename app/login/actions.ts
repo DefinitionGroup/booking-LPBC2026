@@ -3,7 +3,20 @@
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { headers } from "next/headers";
+import { z } from "zod";
 import { createClient } from "@/lib/supabase/server";
+
+const resetPasswordSchema = z.object({
+    email: z.email("Please enter a valid email address."),
+});
+
+const updatePasswordSchema = z.object({
+    password: z.string().min(6, "Password must be at least 6 characters."),
+    confirmPassword: z.string().min(6, "Password must be at least 6 characters."),
+}).refine((data) => data.password === data.confirmPassword, {
+    message: "Passwords do not match.",
+    path: ["confirmPassword"],
+});
 
 export async function login(formData: FormData) {
     const supabase = await createClient();
@@ -35,10 +48,12 @@ export async function signup(formData: FormData) {
 
 export async function resetPassword(formData: FormData) {
     const supabase = await createClient();
-    const email = formData.get("email") as string;
+    const parsed = resetPasswordSchema.safeParse({
+        email: formData.get("email"),
+    });
 
-    if (!email) {
-        redirect("/login/forgot-password?error=Please+enter+your+email+address.");
+    if (!parsed.success) {
+        redirect(`/login/forgot-password?error=${encodeURIComponent(parsed.error.issues[0]?.message ?? "Please enter your email address.")}`);
     }
 
     const headersList = await headers();
@@ -46,8 +61,8 @@ export async function resetPassword(formData: FormData) {
     const proto = headersList.get("x-forwarded-proto") || "http";
     const origin = headersList.get("origin") || `${proto}://${host}`;
 
-    const { error } = await supabase.auth.resetPasswordForEmail(email, {
-        redirectTo: `${origin}/auth/callback?next=/login/reset-password`,
+    const { error } = await supabase.auth.resetPasswordForEmail(parsed.data.email, {
+        redirectTo: `${origin}/auth/callback?flow=recovery&next=/login/reset-password`,
     });
 
     if (error) {
@@ -59,18 +74,25 @@ export async function resetPassword(formData: FormData) {
 
 export async function updatePassword(formData: FormData) {
     const supabase = await createClient();
-    const password = formData.get("password") as string;
-    const confirmPassword = formData.get("confirmPassword") as string;
+    const parsed = updatePasswordSchema.safeParse({
+        password: formData.get("password"),
+        confirmPassword: formData.get("confirmPassword"),
+    });
 
-    if (!password || password.length < 6) {
-        redirect("/login/reset-password?error=Password+must+be+at+least+6+characters.");
+    if (!parsed.success) {
+        redirect(`/login/reset-password?error=${encodeURIComponent(parsed.error.issues[0]?.message ?? "Could not update password.")}`);
     }
 
-    if (password !== confirmPassword) {
-        redirect("/login/reset-password?error=Passwords+do+not+match.");
+    const {
+        data: { user },
+        error: userError,
+    } = await supabase.auth.getUser();
+
+    if (userError || !user) {
+        redirect(`/login/forgot-password?error=${encodeURIComponent("Your reset session is invalid or has expired. Please request a new password reset email.")}`);
     }
 
-    const { error } = await supabase.auth.updateUser({ password });
+    const { error } = await supabase.auth.updateUser({ password: parsed.data.password });
 
     if (error) {
         redirect(`/login/reset-password?error=${encodeURIComponent(error.message)}`);

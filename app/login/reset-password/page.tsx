@@ -1,8 +1,10 @@
 import { updatePassword } from "../actions";
 import { Building2, ArrowLeft, Lock } from "lucide-react";
 import { getServerI18n } from "@/lib/i18n/server";
+import { createClient } from "@/lib/supabase/server";
 import Link from "next/link";
 import Image from "next/image";
+import { redirect } from "next/navigation";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -16,6 +18,18 @@ export default async function ResetPasswordPage(props: {
   const error = searchParams.error;
   const { t } = await getServerI18n();
   const settings = await getSiteSettings();
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (!user) {
+    redirect(
+      `/login/forgot-password?error=${encodeURIComponent(
+        "Your reset session is invalid or has expired. Please request a new password reset email."
+      )}`
+    );
+  }
 
   return (
     <div className="relative flex min-h-screen flex-col items-center justify-center p-6">
