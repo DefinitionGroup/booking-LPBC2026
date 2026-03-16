@@ -12,6 +12,7 @@ import {
 import Link from "next/link";
 import Image from "next/image";
 import { createClient } from "@/lib/supabase/server";
+import { getSiteSettings } from "@/actions/site-settings";
 import {
   endOfMonth,
   format,
@@ -86,6 +87,7 @@ export default async function Home() {
   const { t, locale } = await getServerI18n();
   const dateLocale = getDateFnsLocale(locale);
   const supabase = await createClient();
+  const siteSettings = await getSiteSettings();
   const {
     data: { user },
   } = await supabase.auth.getUser();
@@ -221,18 +223,48 @@ export default async function Home() {
 
   return (
     <ShellWrapper>
-      <div className="space-y-6">
-        {/* Header */}
-        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-          <div>
-            <h1 className="text-3xl tracking-tight">
-              {t("dashboard.title")}
+      {/* ── Hero Banner ── */}
+      <div className="relative -mx-4 -mt-4 mb-8 overflow-hidden sm:-mx-6 sm:-mt-6 lg:-mx-8 lg:-mt-8">
+        <div className="relative h-64 sm:h-80">
+          {siteSettings.hero_image_url ? (
+            <Image
+              src={siteSettings.hero_image_url}
+              alt="Hero background"
+              fill
+              className="object-cover"
+              priority
+            />
+          ) : (
+            <div className="absolute inset-0 bg-linear-to-br from-primary/80 via-primary/50 to-background" />
+          )}
+          {/* Overlay gradient */}
+          <div className="absolute inset-0 bg-linear-to-t from-background via-background/30 to-transparent" />
+          {/* Project name */}
+          <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 px-6 text-center">
+            <h1 className="text-4xl font-bold tracking-tight text-white drop-shadow-lg sm:text-5xl lg:text-6xl">
+              {siteSettings.project_name}
             </h1>
-            <p className="mt-1 text-muted-foreground">
+            <p className="max-w-sm text-sm text-white/80 drop-shadow">
               {user?.email
                 ? t("dashboard.welcomeBack", { email: user.email })
                 : t("dashboard.welcomeBackNoEmail")}
             </p>
+            <Link
+              href="/bookings/new"
+              className="mt-2 inline-flex items-center rounded-full bg-white/20 backdrop-blur-sm border border-white/30 px-5 py-2 text-xs font-medium text-white shadow-sm transition-all hover:bg-white/30"
+            >
+              <Plus className="mr-2 h-4 w-4" />
+              {t("common.newBooking")}
+            </Link>
+          </div>
+        </div>
+      </div>
+
+      <div className="space-y-6">
+        {/* Header */}
+        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+          <div>
+            <h1 className="text-2xl tracking-tight">{t("dashboard.title")}</h1>
           </div>
           <Link
             href="/bookings/new"

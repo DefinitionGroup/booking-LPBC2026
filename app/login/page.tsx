@@ -3,10 +3,12 @@ import { Building2, Mail, Lock, CheckCircle2 } from "lucide-react";
 import { getServerI18n } from "@/lib/i18n/server";
 import { LanguageSwitcher } from "@/components/language-switcher";
 import Link from "next/link";
+import Image from "next/image";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
+import { getSiteSettings } from "@/actions/site-settings";
 
 export default async function LoginPage(props: {
     searchParams: Promise<{ [key: string]: string | string[] | undefined }>
@@ -15,6 +17,7 @@ export default async function LoginPage(props: {
     const error = searchParams.error;
     const success = searchParams.success;
     const { t } = await getServerI18n();
+    const settings = await getSiteSettings();
     const errorMessage =
         typeof error === "string" && error.startsWith("auth.accessManagedError")
             ? error.includes(":")
@@ -23,8 +26,23 @@ export default async function LoginPage(props: {
             : error;
 
     return (
-        <div className="flex min-h-screen flex-col items-center justify-center bg-background p-6">
-            <div className="w-full max-w-sm space-y-6">
+        <div className="relative flex min-h-screen flex-col items-center justify-center p-6">
+            {/* Background image */}
+            {settings.hero_image_url ? (
+                <Image
+                    src={settings.hero_image_url}
+                    alt=""
+                    fill
+                    className="object-cover"
+                    priority
+                />
+            ) : (
+                <div className="absolute inset-0 bg-background" />
+            )}
+            {/* Overlay */}
+            <div className="absolute inset-0 bg-black/50 backdrop-blur-[2px]" />
+
+            <div className="relative z-10 w-full max-w-sm space-y-6">
                 <div className="flex justify-end">
                     <LanguageSwitcher />
                 </div>
@@ -34,8 +52,8 @@ export default async function LoginPage(props: {
                         <Building2 className="h-6 w-6" />
                     </div>
                     <div className="space-y-1">
-                        <h1 className="text-2xl tracking-tight">{t("auth.welcomeTitle")}</h1>
-                        <p className="text-xs text-muted-foreground">{t("auth.welcomeSubtitle")}</p>
+                        <h1 className="text-2xl tracking-tight text-white">{settings.project_name}</h1>
+                        <p className="text-xs text-white/70">{t("auth.welcomeSubtitle")}</p>
                     </div>
                 </div>
 
@@ -100,7 +118,7 @@ export default async function LoginPage(props: {
                     </CardContent>
                 </Card>
 
-                <p className="text-center text-xs text-muted-foreground">
+                <p className="text-center text-xs text-white/50">
                     {t("auth.accessManaged")}
                 </p>
             </div>

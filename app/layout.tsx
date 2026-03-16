@@ -5,6 +5,7 @@ import { Toaster } from "sonner";
 import { ThemeProvider } from "@/components/theme-provider";
 import { I18nProvider } from "@/components/i18n-provider";
 import { getServerI18n } from "@/lib/i18n/server";
+import { getSiteSettings } from "@/actions/site-settings";
 
 const inter = localFont({
   src: "../public/fonts/InterVariable.woff2",
@@ -13,10 +14,13 @@ const inter = localFont({
   display: "swap",
 });
 
-export const metadata: Metadata = {
-  title: "Phantom Equinox",
-  description: "Premium Meeting Room Booking",
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const settings = await getSiteSettings();
+  return {
+    title: settings.project_name,
+    description: "Premium Meeting Room Booking",
+  };
+}
 
 export default async function RootLayout({
   children,

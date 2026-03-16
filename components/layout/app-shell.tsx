@@ -22,6 +22,7 @@ import {
 interface AppShellProps {
   children: React.ReactNode;
   userNav?: React.ReactNode;
+  appName?: string;
 }
 
 const navigation = [
@@ -38,7 +39,7 @@ function isActivePath(pathname: string, href: string) {
   return pathname === href || pathname.startsWith(`${href}/`);
 }
 
-export function AppShell({ children, userNav }: AppShellProps) {
+export function AppShell({ children, userNav, appName }: AppShellProps) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const pathname = usePathname();
   const { t } = useI18n();
@@ -82,7 +83,7 @@ export function AppShell({ children, userNav }: AppShellProps) {
                 <Building2 className="h-5 w-5" />
               </div>
               <div>
-                <div className="text-xs tracking-tight">{t("common.appName")}</div>
+                <div className="text-xs tracking-tight">{appName ?? t("common.appName")}</div>
                 <div className="text-[11px] text-muted-foreground">{t("nav.roomIntelligence")}</div>
               </div>
             </div>

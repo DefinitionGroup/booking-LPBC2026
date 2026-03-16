@@ -17,6 +17,7 @@ import {
   Menu,
   X,
   ShieldCheck,
+  Settings,
 } from "lucide-react";
 
 interface AdminShellProps {
@@ -31,6 +32,7 @@ const navItems = [
   { href: "/admin/buildings", labelKey: "common.buildings", icon: Building2 },
   { href: "/admin/floors", labelKey: "common.floors", icon: Layers },
   { href: "/admin/rooms", labelKey: "common.rooms", icon: DoorOpen },
+  { href: "/admin/settings", labelKey: "common.settings", icon: Settings },
 ];
 
 function isActivePath(pathname: string, href: string) {
