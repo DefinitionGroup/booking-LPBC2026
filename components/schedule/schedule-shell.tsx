@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { format, parseISO, startOfMonth } from "date-fns";
 import { Plus } from "lucide-react";
 import Link from "next/link";

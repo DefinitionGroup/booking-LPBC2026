@@ -10,6 +10,7 @@ import {
   type LucideIcon,
 } from "lucide-react";
 import Link from "next/link";
+import Image from "next/image";
 import { createClient } from "@/lib/supabase/server";
 import {
   endOfMonth,
@@ -286,10 +287,11 @@ export default async function Home() {
                           className="group relative aspect-video overflow-hidden rounded-xl border border-border transition-all hover:shadow-md hover:border-emphasis/30"
                         >
                           {room.image_url ? (
-                            <img
+                            <Image
                               src={room.image_url}
                               alt={room.name}
-                              className="absolute inset-0 h-full w-full object-cover transition-transform group-hover:scale-105"
+                              fill
+                              className="object-cover transition-transform group-hover:scale-105"
                             />
                           ) : (
                             <div className="absolute inset-0 flex items-center justify-center bg-secondary text-white/20">

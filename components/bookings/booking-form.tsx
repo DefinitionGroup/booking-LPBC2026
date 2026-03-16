@@ -1,12 +1,13 @@
 "use client";
 
 import { useMemo } from "react";
-import { useForm, useWatch } from "react-hook-form";
+import { useForm, useWatch, type Control, type UseFormSetValue } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { addMinutes, differenceInMinutes, format } from "date-fns";
 import type { Locale as DateFnsLocale } from "date-fns";
 import { Loader2, Timer, Users, DoorOpen, Check } from "lucide-react";
+import Image from "next/image";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
 import { createBooking } from "@/actions/bookings";
@@ -293,57 +294,7 @@ export function BookingForm({
       <motion.div variants={item} className="space-y-2">
         <label className="text-xs">{t("bookings.room")}</label>
         <input type="hidden" {...register("roomId")} />
-        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-          {rooms.map((room) => {
-            const selected = useWatch({ control, name: "roomId" }) === room.id;
-            return (
-              <button
-                key={room.id}
-                type="button"
-                onClick={() => setValue("roomId", room.id, { shouldValidate: true })}
-                className={cn(
-                  "group relative flex items-start gap-3 rounded-xl border p-3 text-left transition-all",
-                  selected
-                    ? "border-emphasis bg-emphasis/5 ring-1 ring-emphasis/40"
-                    : "border-border/60 bg-background hover:border-border hover:bg-muted/30"
-                )}
-              >
-                {/* Thumbnail */}
-                <div className="h-12 w-16 shrink-0 overflow-hidden rounded-lg">
-                  {room.image_url ? (
-                    <img
-                      src={room.image_url}
-                      alt={room.name}
-                      className="h-full w-full object-cover"
-                    />
-                  ) : (
-                    <div className="flex h-full w-full items-center justify-center bg-secondary">
-                      <DoorOpen className="h-5 w-5 text-muted-foreground/40" />
-                    </div>
-                  )}
-                </div>
-
-                {/* Info */}
-                <div className="min-w-0 flex-1">
-                  <p className={cn("text-xs font-medium", selected && "text-emphasis")}>{room.name}</p>
-                  {room.capacity && (
-                    <p className="mt-0.5 flex items-center gap-1 text-[11px] text-muted-foreground">
-                      <Users className="h-3 w-3" />
-                      {room.capacity}
-                    </p>
-                  )}
-                </div>
-
-                {/* Check */}
-                {selected && (
-                  <div className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-emphasis text-emphasis-foreground">
-                    <Check className="h-3 w-3" />
-                  </div>
-                )}
-              </button>
-            );
-          })}
-        </div>
+        <RoomPicker control={control} rooms={rooms} setValue={setValue} />
         {errors.roomId && <p className="text-xs text-destructive">{getErrorMessage(errors.roomId.message)}</p>}
       </motion.div>
 
@@ -375,6 +326,72 @@ export function BookingForm({
           )}
         </button>
       </motion.div>
-    </motion.form>
+    </motion.form >
+  );
+}
+
+function RoomPicker({
+  control,
+  rooms,
+  setValue,
+}: {
+  control: Control<BookingFormValues>;
+  rooms: BookingFormProps["rooms"];
+  setValue: UseFormSetValue<BookingFormValues>;
+}) {
+  const selectedRoomId = useWatch({ control, name: "roomId" });
+  return (
+    <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+      {rooms.map((room) => {
+        const selected = selectedRoomId === room.id;
+        return (
+          <button
+            key={room.id}
+            type="button"
+            onClick={() => setValue("roomId", room.id, { shouldValidate: true })}
+            className={cn(
+              "group relative flex items-start gap-3 rounded-xl border p-3 text-left transition-all",
+              selected
+                ? "border-emphasis bg-emphasis/5 ring-1 ring-emphasis/40"
+                : "border-border/60 bg-background hover:border-border hover:bg-muted/30"
+            )}
+          >
+            {/* Thumbnail */}
+            <div className="relative h-12 w-16 shrink-0 overflow-hidden rounded-lg">
+              {room.image_url ? (
+                <Image
+                  src={room.image_url}
+                  alt={room.name}
+                  fill
+                  className="object-cover"
+                />
+              ) : (
+                <div className="flex h-full w-full items-center justify-center bg-secondary">
+                  <DoorOpen className="h-5 w-5 text-muted-foreground/40" />
+                </div>
+              )}
+            </div>
+
+            {/* Info */}
+            <div className="min-w-0 flex-1">
+              <p className={cn("text-xs font-medium", selected && "text-emphasis")}>{room.name}</p>
+              {room.capacity && (
+                <p className="mt-0.5 flex items-center gap-1 text-[11px] text-muted-foreground">
+                  <Users className="h-3 w-3" />
+                  {room.capacity}
+                </p>
+              )}
+            </div>
+
+            {/* Check */}
+            {selected && (
+              <div className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-emphasis text-emphasis-foreground">
+                <Check className="h-3 w-3" />
+              </div>
+            )}
+          </button>
+        );
+      })}
+    </div>
   );
 }

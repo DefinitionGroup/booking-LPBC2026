@@ -2,6 +2,7 @@ import { createClient } from "@/lib/supabase/server";
 import { CreateRoomButton } from "@/components/admin/create-room-button";
 import { RoomRowActions } from "@/components/admin/room-row-actions";
 import { getServerI18n } from "@/lib/i18n/server";
+import Image from "next/image";
 
 export default async function AdminRoomsPage() {
   const { t } = await getServerI18n();
@@ -46,12 +47,13 @@ export default async function AdminRoomsPage() {
               {(rooms || []).map((room) => (
                 <tr key={room.id} className="border-t">
                   <td className="p-4">
-                    <div className="h-10 w-14 overflow-hidden rounded-md bg-secondary">
+                    <div className="relative h-10 w-14 overflow-hidden rounded-md bg-secondary">
                       {room.image_url ? (
-                        <img
+                        <Image
                           src={room.image_url}
                           alt={room.name}
-                          className="h-full w-full object-cover"
+                          fill
+                          className="object-cover"
                         />
                       ) : (
                         <div className="flex h-full w-full items-center justify-center text-muted-foreground/40 text-[10px]">
