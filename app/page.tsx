@@ -314,7 +314,7 @@ export default async function Home() {
                             </div>
                             {room.amenities && room.amenities.length > 0 && (
                               <div className="flex flex-wrap gap-1.5">
-                                {room.amenities.slice(0, 3).map((amenity) => (
+                                {room.amenities.slice(0, 3).map((amenity: string) => (
                                   <span
                                     key={amenity}
                                     className="rounded-md bg-white/20 px-2 py-0.5 text-[10px] text-white backdrop-blur-sm"
