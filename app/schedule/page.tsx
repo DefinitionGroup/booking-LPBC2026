@@ -36,13 +36,11 @@ export default async function SchedulePage(props: {
         .gte("start_time", monthStart.toISOString())
         .lte("start_time", monthEnd.toISOString());
 
-    const busyDays = [
-        ...new Set(
-            (monthBookings || []).map((b) =>
-                format(parseISO(b.start_time), "yyyy-MM-dd")
-            )
-        ),
-    ];
+    const bookingCounts: Record<string, number> = {};
+    for (const b of monthBookings || []) {
+        const key = format(parseISO(b.start_time), "yyyy-MM-dd");
+        bookingCounts[key] = (bookingCounts[key] ?? 0) + 1;
+    }
 
     // Transform for component
     const transformedBookings =
@@ -59,7 +57,7 @@ export default async function SchedulePage(props: {
             <ScheduleShell
                 bookings={transformedBookings}
                 currentDate={dateStr}
-                busyDays={busyDays}
+                bookingCounts={bookingCounts}
             />
         </ShellWrapper>
     );

@@ -20,7 +20,7 @@ export function Timeline({ bookings }: { bookings: Booking[] }) {
     const startHour = 6; // 6 AM
     const endHour = 19; // 7 PM
     const totalHours = endHour - startHour;
-    const hourHeight = 80; // px
+    const hourHeight = 56; // px
 
     const hours = Array.from({ length: totalHours + 1 }, (_, i) => startHour + i);
 
@@ -28,7 +28,7 @@ export function Timeline({ bookings }: { bookings: Booking[] }) {
         <div className="relative border border-border rounded-xl bg-card shadow-sm overflow-hidden">
             {/* Header (Rooms, etc - simplified to just time for now) */}
             <div className="flex border-b border-border">
-                <div className="w-16 flex-shrink-0 border-r border-border bg-secondary/30 p-4"></div>
+                <div className="w-16 shrink-0 border-r border-border bg-secondary/30 p-4"></div>
                 <div className="flex-1 p-4 text-xs text-center bg-secondary/10">{t("schedule.allRooms")}</div>
             </div>
 
@@ -41,7 +41,7 @@ export function Timeline({ bookings }: { bookings: Booking[] }) {
                             className="absolute w-full border-b border-border/50 flex items-start"
                             style={{ top: `${(hour - startHour) * hourHeight}px`, height: `${hourHeight}px` }}
                         >
-                            <div className="w-16 flex-shrink-0 -mt-2.5 text-xs text-muted-foreground text-right pr-4">
+                            <div className="w-16 shrink-0 -mt-2.5 text-xs text-muted-foreground text-right pr-4">
                                 {format(new Date().setHours(hour, 0), "h a", { locale: dateLocale })}
                             </div>
                         </div>

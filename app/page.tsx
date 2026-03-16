@@ -237,8 +237,8 @@ export default async function Home() {
           ) : (
             <div className="absolute inset-0 bg-linear-to-br from-primary/80 via-primary/50 to-background" />
           )}
-          {/* Overlay gradient */}
-          <div className="absolute inset-0 bg-linear-to-t from-background via-background/30 to-transparent" />
+          {/* Darken overlay */}
+          <div className="absolute inset-0 bg-black/30" />
           {/* Project name */}
           <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 px-6 text-center">
             <h1 className="text-4xl font-bold tracking-tight text-white drop-shadow-lg sm:text-5xl lg:text-6xl">

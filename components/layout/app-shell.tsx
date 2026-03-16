@@ -30,7 +30,6 @@ const navigation = [
   { key: "common.schedule", href: "/schedule", icon: CalendarDays },
   { key: "common.bookings", href: "/bookings", icon: CreditCard },
   { key: "common.rooms", href: "/rooms", icon: DoorOpen },
-  { key: "common.buildings", href: "/building", icon: Building2 },
   { key: "common.settings", href: "/settings", icon: Settings },
 ];
 

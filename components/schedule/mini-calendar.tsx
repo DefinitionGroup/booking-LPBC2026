@@ -23,8 +23,8 @@ interface MiniCalendarProps {
   onSelectDate: (date: Date) => void;
   viewDate: Date;
   onViewDateChange: (date: Date) => void;
-  /** day keys ("yyyy-MM-dd") that have bookings */
-  busyDays?: Set<string>;
+  /** mapping from "yyyy-MM-dd" to booking count */
+  bookingCounts?: Record<string, number>;
 }
 
 export function MiniCalendar({
@@ -32,7 +32,7 @@ export function MiniCalendar({
   onSelectDate,
   viewDate,
   onViewDateChange,
-  busyDays,
+  bookingCounts,
 }: MiniCalendarProps) {
   const { t, locale } = useI18n();
   const dateLocale = getDateFnsLocale(locale);
@@ -106,7 +106,7 @@ export function MiniCalendar({
           const inMonth = isSameMonth(day, monthStart);
           const isSelected = isSameDay(day, selectedDate);
           const isToday = isSameDay(day, new Date());
-          const hasBusy = busyDays?.has(key);
+          const count = bookingCounts?.[key] ?? 0;
 
           return (
             <button
@@ -114,17 +114,24 @@ export function MiniCalendar({
               type="button"
               onClick={() => onSelectDate(day)}
               className={cn(
-                "relative grid h-7 w-full place-items-center rounded-md text-[11px] transition-colors",
+                "relative flex h-8 w-full flex-col items-center justify-center rounded-md text-[11px] transition-colors",
                 !inMonth && "text-muted-foreground/40",
                 inMonth && !isSelected && "text-foreground hover:bg-secondary",
                 isSelected &&
-                "bg-primary text-primary-foreground hover:bg-primary/90",
+                "bg-emphasis text-primary-foreground hover:bg-primary/90",
                 isToday && !isSelected && "ring-1 ring-primary/40"
               )}
             >
               {format(day, "d")}
-              {hasBusy && !isSelected && (
-                <span className="absolute bottom-0.5 left-1/2 h-1 w-1 -translate-x-1/2 rounded-full bg-primary/60" />
+              {count > 0 && (
+                <span
+                  className={cn(
+                    "text-[9px] absolute -top-2 -left-2 leading-none font-medium tabular-nums",
+                    isSelected ? "text-primary-foreground bg-red-500 p-1 rounded-full  w-4 h-4" : "text-primary-foreground bg-neutral-300 p-1 rounded-full  w-4 h-4 /20"
+                  )}
+                >
+                  {count}
+                </span>
               )}
             </button>
           );

@@ -169,7 +169,8 @@
     "title": "Schedule",
     "fullSchedule": "Calendar View",
     "todaySchedule": "Today's Schedule",
-    "allRooms": "All Rooms"
+    "allRooms": "All Rooms",
+    "noBookings": "No bookings for this day"
   },
   "rooms": {
     "title": "Meeting Rooms",
