@@ -16,7 +16,7 @@ export default async function AdminNewBookingPage(props: {
 }) {
   const searchParams = await props.searchParams;
   const supabase = await createClient();
-  const { data: rooms } = await supabase.from("rooms").select("id, name");
+  const { data: rooms } = await supabase.from("rooms").select("id, name, capacity, image_url").eq("is_active", true).order("name");
 
   return (
     <NewBookingShell

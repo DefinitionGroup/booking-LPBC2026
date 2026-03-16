@@ -1,6 +1,6 @@
 "use client";
 
-import { LogOut, LayoutDashboard, ArrowLeft, Sun, Moon, Languages } from "lucide-react";
+import { LogOut, LayoutDashboard, ArrowLeft, Sun, Moon } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 import { usePathname, useRouter } from "next/navigation";
 import { User } from "@supabase/supabase-js";
@@ -21,8 +21,6 @@ export function UserNavClient({ user, role }: { user: User; role?: string }) {
         await supabase.auth.signOut();
         router.refresh();
     };
-
-    const nextLocale = locale === "en" ? "es" : "en";
 
     return (
         <div className="flex flex-col gap-2">
@@ -48,40 +46,62 @@ export function UserNavClient({ user, role }: { user: User; role?: string }) {
 
             {/* Controls row */}
             <div className="flex items-center gap-1.5">
-                <button
-                    type="button"
-                    onClick={() => setLocale(nextLocale)}
-                    title={locale === "en" ? t("language.spanish") : t("language.english")}
-                    className="grid h-8 w-8 shrink-0 place-items-center rounded-full bg-muted/50 text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
-                >
-                    <Languages className="h-3.5 w-3.5" />
-                </button>
-                <button
-                    type="button"
-                    onClick={() => setTheme("light")}
-                    title={t("theme.light")}
-                    className={cn(
-                        "grid h-8 w-8 shrink-0 place-items-center rounded-full transition-colors",
-                        theme === "light"
-                            ? "bg-muted text-foreground shadow-sm"
-                            : "bg-muted/50 text-muted-foreground hover:bg-muted hover:text-foreground"
-                    )}
-                >
-                    <Sun className="h-3.5 w-3.5" />
-                </button>
-                <button
-                    type="button"
-                    onClick={() => setTheme("dark")}
-                    title={t("theme.dark")}
-                    className={cn(
-                        "grid h-8 w-8 shrink-0 place-items-center rounded-full transition-colors",
-                        theme === "dark"
-                            ? "bg-muted text-foreground shadow-sm"
-                            : "bg-muted/50 text-muted-foreground hover:bg-muted hover:text-foreground"
-                    )}
-                >
-                    <Moon className="h-3.5 w-3.5" />
-                </button>
+                <div className="flex items-center gap-1 rounded-full bg-muted/50 p-1">
+                    <button
+                        type="button"
+                        onClick={() => setLocale("en")}
+                        title={t("language.english")}
+                        className={cn(
+                            "rounded-full px-2.5 py-1 text-xs font-medium transition-colors",
+                            locale === "en"
+                                ? "bg-emphasis text-emphasis-foreground shadow-sm"
+                                : "text-muted-foreground hover:text-foreground"
+                        )}
+                    >
+                        EN
+                    </button>
+                    <button
+                        type="button"
+                        onClick={() => setLocale("es")}
+                        title={t("language.spanish")}
+                        className={cn(
+                            "rounded-full px-2.5 py-1 text-xs font-medium transition-colors",
+                            locale === "es"
+                                ? "bg-emphasis text-emphasis-foreground shadow-sm"
+                                : "text-muted-foreground hover:text-foreground"
+                        )}
+                    >
+                        ES
+                    </button>
+                </div>
+                <div className="ml-auto flex items-center gap-1.5">
+                    <button
+                        type="button"
+                        onClick={() => setTheme("light")}
+                        title={t("theme.light")}
+                        className={cn(
+                            "grid h-8 w-8 shrink-0 place-items-center rounded-full transition-colors",
+                            theme === "light"
+                                ? "bg-muted text-foreground shadow-sm"
+                                : "bg-muted/50 text-muted-foreground hover:bg-muted hover:text-foreground"
+                        )}
+                    >
+                        <Sun className="h-3.5 w-3.5" />
+                    </button>
+                    <button
+                        type="button"
+                        onClick={() => setTheme("dark")}
+                        title={t("theme.dark")}
+                        className={cn(
+                            "grid h-8 w-8 shrink-0 place-items-center rounded-full transition-colors",
+                            theme === "dark"
+                                ? "bg-muted text-foreground shadow-sm"
+                                : "bg-muted/50 text-muted-foreground hover:bg-muted hover:text-foreground"
+                        )}
+                    >
+                        <Moon className="h-3.5 w-3.5" />
+                    </button>
+                </div>
             </div>
 
             {/* Admin button */}

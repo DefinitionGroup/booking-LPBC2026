@@ -99,7 +99,13 @@
     "recentBookings": "Reservas recientes",
     "recentBookingsDesc": "Tu actividad reciente de reservas",
     "noRecentBookings": "Aún no hay reservas.",
-    "viewAllBookings": "Ver todas las reservas"
+    "viewAllBookings": "Ver todas las reservas",
+    "tabCalendar": "Calendario",
+    "tabRooms": "Salas",
+    "tabStatistics": "Estadísticas",
+    "roomGallery": "Galería de salas",
+    "roomGalleryDesc": "Explora las salas disponibles y reserva directamente",
+    "viewAllRooms": "Ver todas las salas"
   },
   "bookings": {
     "title": "Reservas",
@@ -231,6 +237,7 @@
     "createFloor": "Crear planta",
     "createRoom": "Crear sala",
     "name": "Nombre",
+    "image": "Imagen",
     "address": "Dirección",
     "building": "Edificio",
     "floor": "Planta",

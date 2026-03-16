@@ -6,7 +6,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { addMinutes, differenceInMinutes, format } from "date-fns";
 import type { Locale as DateFnsLocale } from "date-fns";
-import { Loader2, Timer } from "lucide-react";
+import { Loader2, Timer, Users, DoorOpen, Check } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
 import { createBooking } from "@/actions/bookings";
@@ -31,7 +31,7 @@ const bookingSchema = z.object({
 type BookingFormValues = z.infer<typeof bookingSchema>;
 
 interface BookingFormProps {
-  rooms: { id: string; name: string }[];
+  rooms: { id: string; name: string; capacity: number | null; image_url: string | null }[];
   preselectedRoomId?: string;
   prefilledStartTime?: string;
   prefilledEndTime?: string;
@@ -80,7 +80,7 @@ export function BookingForm({
 
   const prefilledStart = parseDateTime(prefilledStartTime);
   const prefilledEnd = parseDateTime(prefilledEndTime);
-  const baseStart = prefilledStart ?? roundToNextQuarter(addMinutes(new Date(), 30));
+  const baseStart = prefilledStart ?? roundToNextQuarter(new Date());
   const baseDuration =
     prefilledStart && prefilledEnd
       ? clampDuration(differenceInMinutes(prefilledEnd, prefilledStart))
@@ -292,19 +292,58 @@ export function BookingForm({
 
       <motion.div variants={item} className="space-y-2">
         <label className="text-xs">{t("bookings.room")}</label>
-        <select
-          {...register("roomId")}
-          className="flex h-10 w-full rounded-md border border-border/60 bg-background px-3 py-2 text-xs ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/40"
-        >
-          <option value="" disabled>
-            {t("bookings.selectRoom")}
-          </option>
-          {rooms.map((room) => (
-            <option key={room.id} value={room.id}>
-              {room.name}
-            </option>
-          ))}
-        </select>
+        <input type="hidden" {...register("roomId")} />
+        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+          {rooms.map((room) => {
+            const selected = useWatch({ control, name: "roomId" }) === room.id;
+            return (
+              <button
+                key={room.id}
+                type="button"
+                onClick={() => setValue("roomId", room.id, { shouldValidate: true })}
+                className={cn(
+                  "group relative flex items-start gap-3 rounded-xl border p-3 text-left transition-all",
+                  selected
+                    ? "border-emphasis bg-emphasis/5 ring-1 ring-emphasis/40"
+                    : "border-border/60 bg-background hover:border-border hover:bg-muted/30"
+                )}
+              >
+                {/* Thumbnail */}
+                <div className="h-12 w-16 shrink-0 overflow-hidden rounded-lg">
+                  {room.image_url ? (
+                    <img
+                      src={room.image_url}
+                      alt={room.name}
+                      className="h-full w-full object-cover"
+                    />
+                  ) : (
+                    <div className="flex h-full w-full items-center justify-center bg-secondary">
+                      <DoorOpen className="h-5 w-5 text-muted-foreground/40" />
+                    </div>
+                  )}
+                </div>
+
+                {/* Info */}
+                <div className="min-w-0 flex-1">
+                  <p className={cn("text-xs font-medium", selected && "text-emphasis")}>{room.name}</p>
+                  {room.capacity && (
+                    <p className="mt-0.5 flex items-center gap-1 text-[11px] text-muted-foreground">
+                      <Users className="h-3 w-3" />
+                      {room.capacity}
+                    </p>
+                  )}
+                </div>
+
+                {/* Check */}
+                {selected && (
+                  <div className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-emphasis text-emphasis-foreground">
+                    <Check className="h-3 w-3" />
+                  </div>
+                )}
+              </button>
+            );
+          })}
+        </div>
         {errors.roomId && <p className="text-xs text-destructive">{getErrorMessage(errors.roomId.message)}</p>}
       </motion.div>
 
@@ -324,7 +363,7 @@ export function BookingForm({
         <button
           type="submit"
           disabled={isSubmitting}
-          className="inline-flex h-11 w-full items-center justify-center rounded-md bg-primary px-4 py-2 text-xs text-primary-foreground transition-colors hover:bg-primary/90 disabled:pointer-events-none disabled:opacity-50"
+          className="inline-flex h-11 w-full items-center justify-center rounded-full bg-emphasis px-4 py-2 text-xs font-medium text-emphasis-foreground shadow-sm transition-colors hover:bg-emphasis/85 disabled:pointer-events-none disabled:opacity-50"
         >
           {isSubmitting ? (
             <>

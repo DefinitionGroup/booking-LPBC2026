@@ -12,6 +12,7 @@ import {
   format,
   isSameDay,
   isSameMonth,
+  isToday,
   isWithinInterval,
   parseISO,
   startOfMonth,
@@ -136,9 +137,9 @@ export function MonthlyCalendar({ bookings }: MonthlyCalendarProps) {
 
   return (
     <>
-      <div className="flex h-full min-h-[620px] flex-col">
+      <div className="flex h-full min-h-[620px] p-4 flex-col">
         <div className="mb-4 flex items-center justify-between">
-          <h3 className="text-xl tracking-tight">
+          <h3 className="text-5xl font-light text-neutral-500 emphasis tracking-tight">
             {format(viewDate, "MMMM yyyy", { locale: dateLocale })}
           </h3>
           <div className="flex items-center gap-2">
@@ -202,7 +203,7 @@ export function MonthlyCalendar({ bookings }: MonthlyCalendarProps) {
           )}
         </AnimatePresence>
 
-        <div className="grid grid-cols-7 gap-2 text-xs uppercase tracking-[0.12em] text-muted-foreground">
+        <div className="grid grid-cols-7 gap-2 text-xs uppercase  tracking-[0.12em] text-muted-foreground">
           {weekdayLabels.map((day) => (
             <div key={day} className="px-2 py-1">
               {day}
@@ -215,6 +216,7 @@ export function MonthlyCalendar({ bookings }: MonthlyCalendarProps) {
             const dayKey = format(day, "yyyy-MM-dd");
             const dayBookings = bookingsByDay.get(dayKey) || [];
             const inMonth = isSameMonth(day, monthStart);
+            const today = isToday(day);
             const inRange =
               !!normalizedSelection &&
               isWithinInterval(day, {
@@ -253,10 +255,16 @@ export function MonthlyCalendar({ bookings }: MonthlyCalendarProps) {
                   inMonth
                     ? "border-border bg-background/70"
                     : "border-border/60 bg-background/35 text-muted-foreground",
+                  today && " ",
                   inRange && "border-cyan-500/70 bg-cyan-500/10"
                 )}
               >
-                <div className="mb-2 text-xs">{format(day, "d")}</div>
+                <div className={cn(
+                  "mb-2 flex h-7 w-7 items-center justify-center rounded-full text-xs",
+                  today && "bg-emphasis font-semibold text-emphasis-foreground"
+                )}>
+                  {format(day, "d")}
+                </div>
                 <div className="space-y-1.5">
                   {dayBookings.slice(0, 3).map((booking) => (
                     <button
@@ -268,7 +276,7 @@ export function MonthlyCalendar({ bookings }: MonthlyCalendarProps) {
                         event.stopPropagation();
                         setSelectedBooking(booking);
                       }}
-                      className="flex w-full items-center gap-1 truncate rounded-md border border-red-500/80 bg-red-600 px-2 py-1 text-left text-[11px] text-white transition-colors hover:bg-red-500"
+                      className="flex w-full items-center gap-1 truncate rounded-full border border-red-500/80 bg-red-600 px-2 py-1 text-left text-[9px] text-white transition-colors hover:bg-red-500"
                       title={booking.title}
                     >
                       <CalendarDays className="h-3 w-3 shrink-0 opacity-70" />

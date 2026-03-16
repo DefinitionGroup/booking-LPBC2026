@@ -99,7 +99,13 @@
     "recentBookings": "Recent Bookings",
     "recentBookingsDesc": "Your latest booking activity",
     "noRecentBookings": "No bookings yet.",
-    "viewAllBookings": "View all bookings"
+    "viewAllBookings": "View all bookings",
+    "tabCalendar": "Calendar",
+    "tabRooms": "Rooms",
+    "tabStatistics": "Statistics",
+    "roomGallery": "Room Gallery",
+    "roomGalleryDesc": "Browse available rooms and book directly",
+    "viewAllRooms": "View all rooms"
   },
   "bookings": {
     "title": "Bookings",
@@ -231,6 +237,7 @@
     "createFloor": "Create Floor",
     "createRoom": "Create Room",
     "name": "Name",
+    "image": "Image",
     "address": "Address",
     "building": "Building",
     "floor": "Floor",

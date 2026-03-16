@@ -7,7 +7,7 @@ import { BookingForm } from "@/components/bookings/booking-form";
 import { useI18n } from "@/components/i18n-provider";
 
 interface NewBookingShellProps {
-  rooms: { id: string; name: string }[];
+  rooms: { id: string; name: string; capacity: number | null; image_url: string | null }[];
   mode: "app" | "admin";
   prefilledStartTime?: string;
   prefilledEndTime?: string;
@@ -50,8 +50,6 @@ export function NewBookingShell({
         transition={{ delay: 0.1 }}
         className="relative overflow-hidden rounded-2xl border border-border bg-card/95 shadow-sm"
       >
-        <div className="pointer-events-none absolute -top-24 -right-16 h-56 w-56 rounded-full bg-primary/10 blur-3xl" />
-        <div className="pointer-events-none absolute -bottom-20 -left-16 h-52 w-52 rounded-full bg-blue-500/10 blur-3xl" />
 
         <div className="relative border-b border-border px-6 py-6 sm:px-8">
           <div className="inline-flex items-center gap-2 rounded-full border border-border bg-background/80 px-3 py-1 text-xs text-muted-foreground">

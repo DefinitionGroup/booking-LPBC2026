@@ -33,6 +33,7 @@ export default async function AdminRoomsPage() {
           <table className="w-full min-w-[900px] text-xs">
             <thead className="bg-muted/50 text-left">
               <tr>
+                <th className="p-4">{t("admin.image")}</th>
                 <th className="p-4">{t("admin.name")}</th>
                 <th className="p-4">{t("admin.location")}</th>
                 <th className="p-4">{t("admin.capacity")}</th>
@@ -44,6 +45,21 @@ export default async function AdminRoomsPage() {
             <tbody>
               {(rooms || []).map((room) => (
                 <tr key={room.id} className="border-t">
+                  <td className="p-4">
+                    <div className="h-10 w-14 overflow-hidden rounded-md bg-secondary">
+                      {room.image_url ? (
+                        <img
+                          src={room.image_url}
+                          alt={room.name}
+                          className="h-full w-full object-cover"
+                        />
+                      ) : (
+                        <div className="flex h-full w-full items-center justify-center text-muted-foreground/40 text-[10px]">
+                          —
+                        </div>
+                      )}
+                    </div>
+                  </td>
                   <td className="p-4">{room.name}</td>
                   <td className="p-4 text-muted-foreground">
                     {room.floors?.buildings?.name} - {room.floors?.name}
@@ -74,7 +90,7 @@ export default async function AdminRoomsPage() {
               ))}
               {(!rooms || rooms.length === 0) && (
                 <tr>
-                  <td colSpan={6} className="p-8 text-center text-muted-foreground">
+                  <td colSpan={7} className="p-8 text-center text-muted-foreground">
                     {t("admin.noRoomsFound")}
                   </td>
                 </tr>
