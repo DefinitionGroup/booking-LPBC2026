@@ -37,6 +37,10 @@
     "dark": "Oscuro",
     "system": "Sistema"
   },
+  "funding": {
+    "graphicAlt": "Logotipos del Programa Kit Digital y NextGenerationEU",
+    "statement": "Esta web ha sido financiada por el Programa Kit Digital, en el marco del Plan de Recuperación, Transformación y Resiliencia, financiado por la Unión Europea – NextGenerationEU."
+  },
   "auth": {
     "welcomeTitle": "Bienvenido a Equinox",
     "welcomeSubtitle": "Inicia sesión para reservar tu sala.",

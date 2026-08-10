@@ -37,6 +37,10 @@
     "dark": "Dark",
     "system": "System"
   },
+  "funding": {
+    "graphicAlt": "Kit Digital Programme and NextGenerationEU logos",
+    "statement": "This website has been funded by the Kit Digital Programme within the framework of Spain’s Recovery, Transformation and Resilience Plan, funded by the European Union – NextGenerationEU."
+  },
   "auth": {
     "welcomeTitle": "Welcome to Equinox",
     "welcomeSubtitle": "Sign in to book your meeting room.",

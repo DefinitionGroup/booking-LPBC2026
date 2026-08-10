@@ -26,7 +26,7 @@ export default async function LoginPage(props: {
             : error;
 
     return (
-        <div className="relative flex min-h-screen flex-col items-center justify-center p-6">
+        <div className="relative min-h-screen p-6">
             {/* Background image */}
             {settings.hero_image_url ? (
                 <Image
@@ -42,85 +42,103 @@ export default async function LoginPage(props: {
             {/* Overlay */}
             <div className="absolute inset-0 bg-black/50 backdrop-blur-[2px]" />
 
-            <div className="relative z-10 w-full max-w-sm space-y-6">
-                <div className="flex justify-end">
-                    <LanguageSwitcher />
+            <div className="relative z-10 mx-auto flex min-h-[calc(100vh-3rem)] w-full max-w-5xl flex-col">
+                <div className="mx-auto flex w-full max-w-sm flex-1 flex-col justify-center space-y-6 py-8">
+                    <div className="flex justify-end">
+                        <LanguageSwitcher />
+                    </div>
+
+                    <div className="flex flex-col items-center gap-3 text-center">
+                        <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-primary text-primary-foreground">
+                            <Building2 className="h-6 w-6" />
+                        </div>
+                        <div className="space-y-1">
+                            <h1 className="text-2xl tracking-tight text-white">{settings.project_name}</h1>
+                            <p className="text-xs text-white/70">{t("auth.welcomeSubtitle")}</p>
+                        </div>
+                    </div>
+
+                    {errorMessage && (
+                        <div className="rounded-md bg-destructive/10 px-4 py-3 text-xs text-destructive">
+                            {errorMessage}
+                        </div>
+                    )}
+
+                    {success === "passwordUpdated" && (
+                        <div className="flex items-center gap-2 rounded-md bg-emerald-500/10 px-4 py-3 text-xs text-emerald-700 dark:text-emerald-400">
+                            <CheckCircle2 className="h-4 w-4 shrink-0" />
+                            {t("auth.passwordUpdatedSuccess")}
+                        </div>
+                    )}
+
+                    <Card>
+                        <CardContent>
+                            <form className="flex flex-col gap-5" suppressHydrationWarning>
+                                <div className="space-y-2">
+                                    <Label htmlFor="email">{t("auth.email")}</Label>
+                                    <div className="relative">
+                                        <Mail className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+                                        <Input
+                                            id="email"
+                                            name="email"
+                                            type="email"
+                                            required
+                                            suppressHydrationWarning
+                                            className="pl-9"
+                                            placeholder={t("auth.emailPlaceholder")}
+                                        />
+                                    </div>
+                                </div>
+                                <div className="space-y-2">
+                                    <div className="flex items-center justify-between">
+                                        <Label htmlFor="password">{t("auth.password")}</Label>
+                                        <Link
+                                            href="/login/forgot-password"
+                                            className="text-xs text-muted-foreground transition-colors hover:text-primary"
+                                        >
+                                            {t("auth.forgotPassword")}
+                                        </Link>
+                                    </div>
+                                    <div className="relative">
+                                        <Lock className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+                                        <Input
+                                            id="password"
+                                            name="password"
+                                            type="password"
+                                            required
+                                            suppressHydrationWarning
+                                            className="pl-9"
+                                        />
+                                    </div>
+                                </div>
+
+                                <Button type="submit" formAction={login} className="w-full mt-1">
+                                    {t("auth.login")}
+                                </Button>
+                            </form>
+                        </CardContent>
+                    </Card>
+
+                    <p className="text-center text-xs text-white/50">
+                        {t("auth.accessManaged")}
+                    </p>
                 </div>
 
-                <div className="flex flex-col items-center gap-3 text-center">
-                    <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-primary text-primary-foreground">
-                        <Building2 className="h-6 w-6" />
-                    </div>
-                    <div className="space-y-1">
-                        <h1 className="text-2xl tracking-tight text-white">{settings.project_name}</h1>
-                        <p className="text-xs text-white/70">{t("auth.welcomeSubtitle")}</p>
-                    </div>
-                </div>
-
-                {errorMessage && (
-                    <div className="rounded-md bg-destructive/10 px-4 py-3 text-xs text-destructive">
-                        {errorMessage}
-                    </div>
-                )}
-
-                {success === "passwordUpdated" && (
-                    <div className="flex items-center gap-2 rounded-md bg-emerald-500/10 px-4 py-3 text-xs text-emerald-700 dark:text-emerald-400">
-                        <CheckCircle2 className="h-4 w-4 shrink-0" />
-                        {t("auth.passwordUpdatedSuccess")}
-                    </div>
-                )}
-
-                <Card>
-                    <CardContent>
-                        <form className="flex flex-col gap-5" suppressHydrationWarning>
-                            <div className="space-y-2">
-                                <Label htmlFor="email">{t("auth.email")}</Label>
-                                <div className="relative">
-                                    <Mail className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-                                    <Input
-                                        id="email"
-                                        name="email"
-                                        type="email"
-                                        required
-                                        suppressHydrationWarning
-                                        className="pl-9"
-                                        placeholder={t("auth.emailPlaceholder")}
-                                    />
-                                </div>
-                            </div>
-                            <div className="space-y-2">
-                                <div className="flex items-center justify-between">
-                                    <Label htmlFor="password">{t("auth.password")}</Label>
-                                    <Link
-                                        href="/login/forgot-password"
-                                        className="text-xs text-muted-foreground transition-colors hover:text-primary"
-                                    >
-                                        {t("auth.forgotPassword")}
-                                    </Link>
-                                </div>
-                                <div className="relative">
-                                    <Lock className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-                                    <Input
-                                        id="password"
-                                        name="password"
-                                        type="password"
-                                        required
-                                        suppressHydrationWarning
-                                        className="pl-9"
-                                    />
-                                </div>
-                            </div>
-
-                            <Button type="submit" formAction={login} className="w-full mt-1">
-                                {t("auth.login")}
-                            </Button>
-                        </form>
-                    </CardContent>
-                </Card>
-
-                <p className="text-center text-xs text-white/50">
-                    {t("auth.accessManaged")}
-                </p>
+                <footer
+                    aria-label={t("funding.graphicAlt")}
+                    className="w-full bg-white px-4 py-4 sm:px-6 sm:py-6"
+                >
+                    <Image
+                        src="/brand/kit-digital.svg"
+                        alt={t("funding.graphicAlt")}
+                        width={1595}
+                        height={151}
+                        className="h-auto w-full"
+                    />
+                    <p className="mt-4 max-w-4xl text-xs leading-relaxed text-slate-600 sm:text-sm">
+                        {t("funding.statement")}
+                    </p>
+                </footer>
             </div>
         </div>
     );
