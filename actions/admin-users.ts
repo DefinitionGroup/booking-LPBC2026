@@ -144,10 +144,14 @@ export async function inviteUserToCompany(values: z.input<typeof inviteUserSchem
 
 export async function updateAdminUser(values: z.input<typeof updateUserSchema>) {
   const auth = await assertAdmin();
-  if (auth.error) return { success: false, message: auth.error };
+  if (auth.error) {
+    return { success: false, message: auth.error, diagnosticCode: "assert-admin" };
+  }
 
   const parsed = updateUserSchema.safeParse(values);
-  if (!parsed.success) return { success: false, message: "errors.invalidFields" };
+  if (!parsed.success) {
+    return { success: false, message: "errors.invalidFields", diagnosticCode: "validation" };
+  }
 
   const { data: target, error: targetError } = await auth.supabase
     .from("profiles")
@@ -155,9 +159,19 @@ export async function updateAdminUser(values: z.input<typeof updateUserSchema>) 
     .eq("id", parsed.data.profileId)
     .single();
 
-  if (targetError || !target) return { success: false, message: "errors.notFound" };
+  if (targetError || !target) {
+    return {
+      success: false,
+      message: "errors.notFound",
+      diagnosticCode: `target-query:${targetError?.code || "no-row"}`,
+    };
+  }
   if (target.status === "anonymized") {
-    return { success: false, message: "admin.userLifecycleConflict" };
+    return {
+      success: false,
+      message: "admin.userLifecycleConflict",
+      diagnosticCode: "target-anonymized",
+    };
   }
 
   let adminClient: Awaited<ReturnType<typeof createAdminClient>> | null = null;
@@ -165,13 +179,25 @@ export async function updateAdminUser(values: z.input<typeof updateUserSchema>) 
 
   try {
     if (emailChanged) {
-      if (!target.auth_user_id) return { success: false, message: "admin.authAccountMissing" };
+      if (!target.auth_user_id) {
+        return {
+          success: false,
+          message: "admin.authAccountMissing",
+          diagnosticCode: "auth-account-missing",
+        };
+      }
       adminClient = await createAdminClient();
       const { error } = await adminClient.auth.admin.updateUserById(target.auth_user_id, {
         email: parsed.data.email,
         email_confirm: true,
       });
-      if (error) return { success: false, message: error.message };
+      if (error) {
+        return {
+          success: false,
+          message: error.message,
+          diagnosticCode: `auth-update:${error.code || error.status || "unknown"}`,
+        };
+      }
     }
 
     const { data: transferred, error } = await auth.supabase.rpc("update_user_admin", {
@@ -184,13 +210,23 @@ export async function updateAdminUser(values: z.input<typeof updateUserSchema>) 
     });
 
     if (error) {
+      console.error("[DEBUG-user-update-7c31] RPC failed", {
+        code: error.code,
+        message: error.message,
+        details: error.details,
+        hint: error.hint,
+      });
       if (emailChanged && adminClient && target.auth_user_id) {
         await adminClient.auth.admin.updateUserById(target.auth_user_id, {
           email: target.email,
           email_confirm: true,
         });
       }
-      return { success: false, message: userLifecycleError(error.code) };
+      return {
+        success: false,
+        message: userLifecycleError(error.code),
+        diagnosticCode: error.code,
+      };
     }
 
     revalidatePath("/admin/users");
@@ -202,7 +238,11 @@ export async function updateAdminUser(values: z.input<typeof updateUserSchema>) 
     };
   } catch (error) {
     console.error(error);
-    return { success: false, message: "admin.serviceRoleRequired" };
+    return {
+      success: false,
+      message: "admin.serviceRoleRequired",
+      diagnosticCode: "exception",
+    };
   }
 }
 

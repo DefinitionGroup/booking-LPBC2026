@@ -92,6 +92,10 @@ export function UserActions({
         replacementProfileId: replacementProfileId || null,
       });
       if (!result.success) {
+        console.error(
+          "[DEBUG-user-update-client-4e82] Update failed",
+          "diagnosticCode" in result ? result.diagnosticCode : "pre-RPC",
+        );
         toast.error(t(result.message || "errors.generic"));
         return;
       }
