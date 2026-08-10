@@ -3,16 +3,22 @@
 import { createClient } from "@/lib/supabase/server";
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
-import { sendBookingRequestEmail, sendBookingStatusEmail } from "@/lib/email";
+import { sendBookingRequestEmail } from "@/lib/email";
+import { getBookingAvailability } from "@/lib/bookings/availability";
 
-const bookingSchema = z.object({
-    title: z.string().min(3),
-    description: z.string().optional(),
-    startTime: z.string(),
-    endTime: z.string(),
-    roomId: z.string(),
-    recurrence: z.enum(["none", "daily", "weekly"]),
-});
+const bookingSchema = z
+    .object({
+        title: z.string().trim().min(3).max(200),
+        description: z.string().trim().max(2000).optional(),
+        startTime: z.iso.datetime({ offset: true }),
+        endTime: z.iso.datetime({ offset: true }),
+        roomId: z.string().uuid(),
+        recurrence: z.enum(["none", "daily", "weekly"]),
+    })
+    .refine((booking) => new Date(booking.startTime) < new Date(booking.endTime), {
+        message: "End time must be after start time",
+        path: ["endTime"],
+    });
 
 type CreateBookingInput = z.input<typeof bookingSchema>;
 
@@ -43,17 +49,47 @@ export async function createBooking(_prevState: unknown, formData: FormData | Cr
         return { success: false, message: "errors.unauthorized" };
     }
 
-    // 2. Check overlap
-    // This is a simplified check. A robust one would check for conflicting ranges.
-    const { data: conflicts, error: conflictError } = await supabase
-        .from("bookings")
-        .select("id")
-        .eq("status", "approved")
-        .eq("room_id", roomId)
-        .or(`and(start_time.lte.${endTime},end_time.gte.${startTime})`);
+    const { data: profile } = await supabase
+        .from("profiles")
+        .select("id, company_id, status")
+        .eq("auth_user_id", user.id)
+        .single();
+
+    if (!profile?.company_id || profile.status !== "active") {
+        return { success: false, message: "bookings.activeCompanyRequired" };
+    }
+
+    const { data: company } = await supabase
+        .from("companies")
+        .select("status")
+        .eq("id", profile.company_id)
+        .eq("status", "active")
+        .single();
+
+    if (!company) {
+        return { success: false, message: "bookings.activeCompanyRequired" };
+    }
+
+    // 2. Check the room and its privacy-safe approved-booking availability.
+    const { data: room, error: roomError } = await supabase
+        .from("rooms")
+        .select("name")
+        .eq("id", roomId)
+        .eq("is_active", true)
+        .single();
+
+    if (roomError || !room) {
+        return { success: false, message: "bookings.availabilityCheckFailed" };
+    }
+
+    const { data: conflicts, error: conflictError } = await getBookingAvailability(
+        supabase,
+        startTime,
+        endTime,
+        roomId
+    );
 
     if (conflictError) {
-        console.error("Conflict check error:", conflictError);
         return { success: false, message: "bookings.availabilityCheckFailed" };
     }
 
@@ -68,8 +104,10 @@ export async function createBooking(_prevState: unknown, formData: FormData | Cr
         start_time: startTime,
         end_time: endTime,
         room_id: roomId,
-        user_id: user.id, // In real app: user.id
-        status: 'pending', // Default to pending
+        user_id: profile.id,
+        responsible_profile_id: profile.id,
+        company_id: profile.company_id,
+        status: 'pending',
         recurrence_rule: recurrence === 'none' ? null : `FREQ=${recurrence.toUpperCase()}`,
     });
 
@@ -79,9 +117,6 @@ export async function createBooking(_prevState: unknown, formData: FormData | Cr
     }
 
     // 4. Send Email to Admin
-    // Fetch room name for the email
-    const { data: room } = await supabase.from("rooms").select("name").eq("id", roomId).single();
-
     // Find an admin to email (just pick the first one for now)
     const { data: adminProfile } = await supabase
         .from("profiles")
@@ -108,57 +143,4 @@ export async function createBooking(_prevState: unknown, formData: FormData | Cr
     revalidatePath("/schedule");
 
     return { success: true, message: "bookings.bookingSubmitted" };
-}
-
-export async function updateBookingStatus(bookingId: string, status: 'approved' | 'rejected') {
-    const supabase = await createClient();
-
-    // 1. Verify Admin (Quick check)
-    const { data: { user } } = await supabase.auth.getUser();
-    if (!user) return { success: false, message: "errors.unauthorized" };
-
-    const { data: profile } = await supabase.from("profiles").select("role").eq("id", user.id).single();
-    // Allow if role is missing (first user) or if admin
-    if (profile && profile.role !== 'admin') {
-        return { success: false, message: "errors.adminsOnly" };
-    }
-
-    // 2. Update Status
-    const { error } = await supabase
-        .from("bookings")
-        .update({ status })
-        .eq("id", bookingId);
-
-    // ... existing code ...
-    if (error) {
-        console.error("Update error:", error);
-        return { success: false, message: "errors.generic" };
-    }
-
-    // 3. Send Email Notification
-    // Fetch booking details to get user email and room name
-    const { data: bookingData } = await supabase
-        .from("bookings")
-        .select("*, rooms(name), profiles(email)")
-        .eq("id", bookingId)
-        .single();
-
-    if (bookingData && bookingData.profiles?.email) {
-        await sendBookingStatusEmail(
-            bookingData.profiles.email,
-            status,
-            {
-                title: bookingData.title,
-                startTime: bookingData.start_time,
-                endTime: bookingData.end_time,
-                roomName: bookingData.rooms?.name || "Unknown Room"
-            }
-        );
-    }
-
-    revalidatePath("/admin");
-    revalidatePath("/bookings");
-    revalidatePath("/schedule");
-
-    return { success: true, message: `status.${status}` };
 }

@@ -9,9 +9,9 @@ export async function UserNav() {
 
     const { data: profile } = await supabase
         .from("profiles")
-        .select("role")
-        .eq("id", user.id)
+        .select("role, status")
+        .eq("auth_user_id", user.id)
         .single();
 
-    return <UserNavClient user={user} role={profile?.role} />;
+    return <UserNavClient user={user} role={profile?.status === "active" ? profile.role : undefined} />;
 }

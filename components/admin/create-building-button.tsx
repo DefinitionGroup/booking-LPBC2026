@@ -3,7 +3,7 @@
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
-import { createClient } from "@/lib/supabase/client";
+import { createBuilding } from "@/actions/admin";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { useState } from "react";
@@ -23,11 +23,10 @@ const formSchema = z.object({
 export function CreateBuildingButton() {
   const [open, setOpen] = useState(false);
   const router = useRouter();
-  const supabase = createClient();
   const { t } = useI18n();
   const getErrorMessage = (message?: string) => (message ? t(message) : "");
 
-  const { register, handleSubmit, formState: { errors }, reset } = useForm<z.infer<typeof formSchema>>({
+  const { register, handleSubmit, formState: { errors, isSubmitting }, reset } = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       name: "",
@@ -36,22 +35,16 @@ export function CreateBuildingButton() {
   });
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
-    try {
-      const { error } = await supabase.from('buildings').insert({
-        name: values.name,
-        address: values.address
-      });
-
-      if (error) throw error;
-
-      toast.success(t("admin.createBuilding"));
-      setOpen(false);
-      reset();
-      router.refresh();
-    } catch (error) {
-      toast.error(t("errors.generic"));
-      console.error(error);
+    const result = await createBuilding(values);
+    if (!result.success) {
+      toast.error(result.message ? t(result.message) : t("errors.generic"));
+      return;
     }
+
+    toast.success(t(result.message || "admin.buildingCreated"));
+    setOpen(false);
+    reset();
+    router.refresh();
   }
 
   return (
@@ -90,7 +83,7 @@ export function CreateBuildingButton() {
 
           <div className="flex justify-end pt-4 gap-2">
             <Button type="button" variant="outline" onClick={() => setOpen(false)}>{t("common.cancel")}</Button>
-            <Button type="submit">{t("common.create")}</Button>
+            <Button type="submit" disabled={isSubmitting}>{t("common.create")}</Button>
           </div>
         </form>
       </Modal>

@@ -50,11 +50,11 @@ export async function updateSiteSettings(formData: FormData) {
 
   const { data: profile } = await supabase
     .from("profiles")
-    .select("role")
-    .eq("id", user.id)
+    .select("role, status")
+    .eq("auth_user_id", user.id)
     .single();
 
-  if (!profile || profile.role !== "admin") {
+  if (!profile || profile.role !== "admin" || profile.status !== "active") {
     redirect("/");
   }
 

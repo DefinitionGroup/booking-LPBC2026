@@ -31,7 +31,7 @@ export default async function AdminBuildingsPage() {
                   <td className="p-4">{building.name}</td>
                   <td className="p-4 text-muted-foreground">{building.address}</td>
                   <td className="p-4 text-right">
-                    <BuildingRowActions id={building.id} name={building.name} />
+                    <BuildingRowActions id={building.id} name={building.name} address={building.address} />
                   </td>
                 </tr>
               ))}

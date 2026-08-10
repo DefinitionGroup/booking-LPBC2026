@@ -5,6 +5,15 @@ const resend = new Resend(process.env.RESEND_API_KEY);
 
 const FROM_EMAIL = 'onboarding@resend.dev'; // Replace with your domain in production
 
+function escapeHtml(value: string) {
+  return value
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("'", "&#039;");
+}
+
 export async function sendBookingRequestEmail(
   adminEmail: string,
   bookingDetails: {
@@ -28,9 +37,9 @@ export async function sendBookingRequestEmail(
       subject: `New Booking Request: ${bookingDetails.title}`,
       html: `
         <h2>New Booking Request</h2>
-        <p><strong>User:</strong> ${bookingDetails.userName} (${bookingDetails.userEmail})</p>
-        <p><strong>Room:</strong> ${bookingDetails.roomName}</p>
-        <p><strong>Title:</strong> ${bookingDetails.title}</p>
+        <p><strong>User:</strong> ${escapeHtml(bookingDetails.userName)} (${escapeHtml(bookingDetails.userEmail)})</p>
+        <p><strong>Room:</strong> ${escapeHtml(bookingDetails.roomName)}</p>
+        <p><strong>Title:</strong> ${escapeHtml(bookingDetails.title)}</p>
         <p><strong>Time:</strong> ${new Date(bookingDetails.startTime).toLocaleString()} - ${new Date(bookingDetails.endTime).toLocaleString()}</p>
         <br/>
         <a href="${process.env.NEXT_PUBLIC_APP_URL}/admin">Approve/Reject in Dashboard</a>
@@ -45,7 +54,7 @@ export async function sendBookingRequestEmail(
 
 export async function sendBookingStatusEmail(
   userEmail: string,
-  status: 'approved' | 'rejected',
+  status: 'approved' | 'rejected' | 'cancelled',
   bookingDetails: {
     title: string;
     startTime: string;
@@ -58,7 +67,7 @@ export async function sendBookingStatusEmail(
     return { success: false, error: "Missing API Key" };
   }
 
-  const color = status === 'approved' ? 'green' : 'red';
+  const color = status === 'approved' ? 'green' : status === 'cancelled' ? 'gray' : 'red';
   const statusText = status.charAt(0).toUpperCase() + status.slice(1);
 
   try {
@@ -68,8 +77,8 @@ export async function sendBookingStatusEmail(
       subject: `Booking ${statusText}: ${bookingDetails.title}`,
       html: `
         <h2>Your booking has been <span style="color: ${color}">${status}</span></h2>
-        <p><strong>Title:</strong> ${bookingDetails.title}</p>
-        <p><strong>Room:</strong> ${bookingDetails.roomName}</p>
+        <p><strong>Title:</strong> ${escapeHtml(bookingDetails.title)}</p>
+        <p><strong>Room:</strong> ${escapeHtml(bookingDetails.roomName)}</p>
         <p><strong>Time:</strong> ${new Date(bookingDetails.startTime).toLocaleString()} - ${new Date(bookingDetails.endTime).toLocaleString()}</p>
         <br/>
         <a href="${process.env.NEXT_PUBLIC_APP_URL}/bookings">View My Bookings</a>

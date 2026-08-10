@@ -35,6 +35,26 @@ export async function updateSession(request: NextRequest) {
         data: { user },
     } = await supabase.auth.getUser();
 
+    if (user && !request.nextUrl.pathname.startsWith("/auth")) {
+        const { data: profile } = await supabase
+            .from("profiles")
+            .select("status")
+            .eq("auth_user_id", user.id)
+            .single();
+
+        if (!profile || profile.status !== "active") {
+            await supabase.auth.signOut();
+            const url = request.nextUrl.clone();
+            url.pathname = "/login";
+            url.search = "?error=account_inactive";
+            const redirectResponse = NextResponse.redirect(url);
+            response.cookies.getAll().forEach((cookie) => {
+                redirectResponse.cookies.set(cookie.name, cookie.value, cookie);
+            });
+            return redirectResponse;
+        }
+    }
+
     // Protected Routes Logic
     if (
         !user &&

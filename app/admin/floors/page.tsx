@@ -41,7 +41,13 @@ export default async function AdminFloorsPage() {
                   <td className="p-4 text-muted-foreground">{floor.buildings?.name || t("admin.building")}</td>
                   <td className="p-4 text-muted-foreground">{floor.level_number}</td>
                   <td className="p-4 text-right">
-                    <FloorRowActions id={floor.id} name={floor.name} />
+                    <FloorRowActions
+                      id={floor.id}
+                      name={floor.name}
+                      levelNumber={floor.level_number}
+                      buildingId={floor.building_id}
+                      buildings={buildings || []}
+                    />
                   </td>
                 </tr>
               ))}

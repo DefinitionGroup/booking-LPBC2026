@@ -1,17 +1,9 @@
--- Enable RLS policies for seeding data (Developers/Admins)
+-- DEPRECATED: this file previously granted every authenticated user insert
+-- access to administrative tables. It is intentionally non-runnable.
+-- Apply db/08_security_hardening.sql instead.
 
--- Companies
-create policy "Enable insert for authenticated users" on companies 
-for insert with check (auth.role() = 'authenticated');
-
--- Buildings
-create policy "Enable insert for authenticated users" on buildings 
-for insert with check (auth.role() = 'authenticated');
-
--- Floors
-create policy "Enable insert for authenticated users" on floors 
-for insert with check (auth.role() = 'authenticated');
-
--- Rooms
-create policy "Enable insert for authenticated users" on rooms 
-for insert with check (auth.role() = 'authenticated');
+do $$
+begin
+  raise exception 'db/rls_fix.sql is unsafe and deprecated. Apply db/08_security_hardening.sql.';
+end;
+$$;

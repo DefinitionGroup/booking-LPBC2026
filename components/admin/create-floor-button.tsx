@@ -3,7 +3,7 @@
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
-import { createClient } from "@/lib/supabase/client";
+import { createFloor } from "@/actions/admin";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { useState } from "react";
@@ -32,11 +32,10 @@ interface CreateFloorButtonProps {
 export function CreateFloorButton({ buildings }: CreateFloorButtonProps) {
   const [open, setOpen] = useState(false);
   const router = useRouter();
-  const supabase = createClient();
   const { t } = useI18n();
   const getErrorMessage = (message?: string) => (message ? t(message) : "");
 
-  const { register, handleSubmit, formState: { errors }, reset } = useForm<CreateFloorFormInput, unknown, CreateFloorFormValues>({
+  const { register, handleSubmit, formState: { errors, isSubmitting }, reset } = useForm<CreateFloorFormInput, unknown, CreateFloorFormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       name: "",
@@ -46,24 +45,20 @@ export function CreateFloorButton({ buildings }: CreateFloorButtonProps) {
   });
 
   async function onSubmit(values: CreateFloorFormValues) {
-    try {
-      // Map 'level' to 'level_number' as per schema
-      const { error } = await supabase.from('floors').insert({
-        name: values.name,
-        level_number: values.level,
-        building_id: values.building_id
-      });
-
-      if (error) throw error;
-
-      toast.success(t("admin.createFloor"));
-      setOpen(false);
-      reset();
-      router.refresh();
-    } catch (error) {
-      const message = error instanceof Error ? error.message : t("errors.generic");
-      toast.error(message);
+    const result = await createFloor({
+      name: values.name,
+      level_number: values.level,
+      building_id: values.building_id,
+    });
+    if (!result.success) {
+      toast.error(result.message ? t(result.message) : t("errors.generic"));
+      return;
     }
+
+    toast.success(t(result.message || "admin.floorCreated"));
+    setOpen(false);
+    reset();
+    router.refresh();
   }
 
   return (
@@ -115,7 +110,7 @@ export function CreateFloorButton({ buildings }: CreateFloorButtonProps) {
 
           <div className="flex justify-end pt-4 gap-2">
             <Button type="button" variant="outline" onClick={() => setOpen(false)}>{t("common.cancel")}</Button>
-            <Button type="submit">{t("common.create")}</Button>
+            <Button type="submit" disabled={isSubmitting}>{t("common.create")}</Button>
           </div>
         </form>
       </Modal>

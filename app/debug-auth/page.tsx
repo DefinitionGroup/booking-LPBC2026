@@ -9,7 +9,7 @@ export default async function DebugAuthPage() {
   const { data: profile, error: profileError } = user ? await supabase
     .from("profiles")
     .select("*")
-    .eq("id", user.id)
+    .eq("auth_user_id", user.id)
     .single() : { data: null, error: null };
 
   return (

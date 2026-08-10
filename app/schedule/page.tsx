@@ -2,11 +2,14 @@ import { ShellWrapper } from "@/components/layout/shell-wrapper";
 import { ScheduleShell } from "@/components/schedule/schedule-shell";
 import { createClient } from "@/lib/supabase/server";
 import { format, startOfMonth, endOfMonth, parseISO } from "date-fns";
+import { getBookingAvailability } from "@/lib/bookings/availability";
+import { getServerI18n } from "@/lib/i18n/server";
 
 export default async function SchedulePage(props: {
     searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 }) {
     const searchParams = await props.searchParams;
+    const { t } = await getServerI18n();
     const supabase = await createClient();
 
     // Determine the target date from search params or default to today
@@ -20,21 +23,21 @@ export default async function SchedulePage(props: {
     const dayEnd = new Date(targetDate);
     dayEnd.setHours(23, 59, 59, 999);
 
-    const { data: bookings } = await supabase
-        .from("bookings")
-        .select("id, title, start_time, end_time, status, rooms(name)")
-        .gte("start_time", dayStart.toISOString())
-        .lte("end_time", dayEnd.toISOString());
+    const { data: bookings } = await getBookingAvailability(
+        supabase,
+        dayStart.toISOString(),
+        dayEnd.toISOString()
+    );
 
     // Fetch busy days for the visible month (for mini calendar dots)
     const monthStart = startOfMonth(targetDate);
     const monthEnd = endOfMonth(targetDate);
 
-    const { data: monthBookings } = await supabase
-        .from("bookings")
-        .select("start_time")
-        .gte("start_time", monthStart.toISOString())
-        .lte("start_time", monthEnd.toISOString());
+    const { data: monthBookings } = await getBookingAvailability(
+        supabase,
+        monthStart.toISOString(),
+        monthEnd.toISOString()
+    );
 
     const bookingCounts: Record<string, number> = {};
     for (const b of monthBookings || []) {
@@ -44,13 +47,16 @@ export default async function SchedulePage(props: {
 
     // Transform for component
     const transformedBookings =
-        bookings?.map((b) => {
-            const roomData = Array.isArray(b.rooms) ? b.rooms[0] : b.rooms;
+        bookings.map((b, index) => {
             return {
-                ...b,
-                room: roomData ? { name: roomData.name } : undefined,
+                id: `${b.room_id}:${b.start_time}:${index}`,
+                title: t("schedule.reserved"),
+                start_time: b.start_time,
+                end_time: b.end_time,
+                status: "approved",
+                room: { name: b.room_name },
             };
-        }) || [];
+        });
 
     return (
         <ShellWrapper>

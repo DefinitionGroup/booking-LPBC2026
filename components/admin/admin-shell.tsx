@@ -13,6 +13,7 @@ import {
   Layers,
   DoorOpen,
   CalendarPlus,
+  CalendarDays,
   Users,
   Menu,
   X,
@@ -27,6 +28,7 @@ interface AdminShellProps {
 
 const navItems = [
   { href: "/admin", labelKey: "common.dashboard", icon: LayoutDashboard },
+  { href: "/admin/bookings", labelKey: "common.bookings", icon: CalendarDays },
   { href: "/admin/bookings/new", labelKey: "common.newBooking", icon: CalendarPlus },
   { href: "/admin/users", labelKey: "common.users", icon: Users },
   { href: "/admin/buildings", labelKey: "common.buildings", icon: Building2 },
@@ -37,6 +39,7 @@ const navItems = [
 
 function isActivePath(pathname: string, href: string) {
   if (href === "/admin") return pathname === href;
+  if (href === "/admin/bookings") return pathname === href;
   return pathname === href || pathname.startsWith(`${href}/`);
 }
 

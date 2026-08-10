@@ -5,6 +5,7 @@ import { Plus } from "lucide-react";
 import { format } from "date-fns";
 import { getServerI18n } from "@/lib/i18n/server";
 import { getDateFnsLocale } from "@/lib/i18n/date-fns";
+import { BookingActions } from "@/components/bookings/booking-actions";
 
 export default async function BookingsPage() {
     const { t, locale } = await getServerI18n();
@@ -12,7 +13,7 @@ export default async function BookingsPage() {
     const supabase = await createClient();
     const { data: bookings } = await supabase
         .from("bookings")
-        .select("*, rooms(name), profiles(email)")
+        .select("*, rooms(name)")
         .order("start_time", { ascending: true });
 
     return (
@@ -30,14 +31,15 @@ export default async function BookingsPage() {
                 </div>
 
                 <div className="rounded-lg bg-card shadow-sm overflow-hidden">
-                    <table className="w-full text-xs text-left">
+                    <div className="overflow-x-auto">
+                    <table className="w-full min-w-[760px] text-xs text-left">
                         <thead className="bg-secondary/50 text-muted-foreground border-b border-border/30">
                             <tr>
                                 <th className="px-6 py-3">{t("bookings.tableTitle")}</th>
                                 <th className="px-6 py-3">{t("bookings.room")}</th>
-                                <th className="px-6 py-3">{t("bookings.tableUser")}</th>
                                 <th className="px-6 py-3">{t("bookings.tableDateTime")}</th>
                                 <th className="px-6 py-3">{t("bookings.tableStatus")}</th>
+                                <th className="px-6 py-3 text-right">{t("common.actions")}</th>
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-border">
@@ -46,7 +48,6 @@ export default async function BookingsPage() {
                                     <tr key={booking.id} className="hover:bg-muted/50 transition-colors">
                                         <td className="px-6 py-4">{booking.title}</td>
                                         <td className="px-6 py-4">{booking.rooms?.name || t("calendar.unknownRoom")}</td>
-                                        <td className="px-6 py-4 text-muted-foreground">{booking.profiles?.email || t("common.user")}</td>
                                         <td className="px-6 py-4">
                                             <div className="flex flex-col">
                                                 <span>{format(new Date(booking.start_time), "MMM d, yyyy", { locale: dateLocale })}</span>
@@ -59,10 +60,14 @@ export default async function BookingsPage() {
                                             <span className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs capitalize
                                         ${booking.status === 'approved' ? 'bg-green-500/10 text-green-700' :
                                                     booking.status === 'pending' ? 'bg-yellow-500/10 text-yellow-700' :
-                                                        'bg-red-500/10 text-red-700'}`}
+                                                        booking.status === 'cancelled' ? 'bg-muted text-muted-foreground' :
+                                                            'bg-red-500/10 text-red-700'}`}
                                             >
                                                 {t(`status.${booking.status}`)}
                                             </span>
+                                        </td>
+                                        <td className="px-6 py-4 text-right">
+                                            <BookingActions booking={booking} mode="user" />
                                         </td>
                                     </tr>
                                 ))
@@ -75,6 +80,7 @@ export default async function BookingsPage() {
                             )}
                         </tbody>
                     </table>
+                    </div>
                 </div>
             </div>
         </ShellWrapper>

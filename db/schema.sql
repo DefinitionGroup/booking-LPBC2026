@@ -1,23 +1,37 @@
 -- Enable UUID extension
 create extension if not exists "uuid-ossp";
+create extension if not exists btree_gist;
 
 -- Companies (Tenants)
+create type company_status as enum ('active', 'inactive');
+
 create table companies (
   id uuid primary key default uuid_generate_v4(),
   name text not null,
   domain text, -- for auto-assigning users based on email
+  status company_status default 'active'::company_status not null,
+  deactivated_at timestamp with time zone,
+  deactivated_by uuid references auth.users(id) on delete set null,
+  deactivation_reason text,
   created_at timestamp with time zone default timezone('utc'::text, now()) not null
 );
 
 -- Profiles (Users) - extensions of auth.users
 create type user_role as enum ('admin', 'user');
+create type profile_status as enum ('active', 'inactive', 'anonymized');
 
 create table profiles (
-  id uuid primary key references auth.users(id) on delete cascade,
+  id uuid primary key,
+  auth_user_id uuid unique references auth.users(id) on delete set null,
   email text not null,
   full_name text,
   role user_role default 'user'::user_role,
   company_id uuid references companies(id),
+  status profile_status default 'active'::profile_status not null,
+  deactivated_at timestamp with time zone,
+  deactivated_by uuid references profiles(id) on delete restrict,
+  deactivation_reason text,
+  anonymized_at timestamp with time zone,
   created_at timestamp with time zone default timezone('utc'::text, now()) not null,
   updated_at timestamp with time zone default timezone('utc'::text, now()) not null
 );
@@ -57,7 +71,9 @@ create type booking_status as enum ('pending', 'approved', 'rejected', 'cancelle
 create table bookings (
   id uuid primary key default uuid_generate_v4(),
   room_id uuid references rooms(id) on delete cascade not null,
-  user_id uuid references profiles(id) on delete cascade not null,
+  user_id uuid references profiles(id) on delete restrict not null,
+  responsible_profile_id uuid references profiles(id) on delete restrict not null,
+  company_id uuid references companies(id) on delete restrict not null,
   title text not null,
   description text,
   start_time timestamp with time zone not null,
@@ -65,8 +81,28 @@ create table bookings (
   status booking_status default 'pending'::booking_status,
   recurrence_rule text, -- RRule string for recurring meetings
   parent_booking_id uuid references bookings(id), -- for instances of recurring meetings
+  decided_at timestamp with time zone,
+  decided_by uuid references profiles(id) on delete restrict,
+  cancelled_at timestamp with time zone,
+  cancelled_by uuid references profiles(id) on delete restrict,
+  cancellation_reason text,
   created_at timestamp with time zone default timezone('utc'::text, now()) not null,
-  updated_at timestamp with time zone default timezone('utc'::text, now()) not null
+  updated_at timestamp with time zone default timezone('utc'::text, now()) not null,
+  constraint bookings_valid_time check (start_time < end_time),
+  constraint bookings_no_approved_overlap exclude using gist (
+    room_id with =,
+    tstzrange(start_time, end_time, '[)') with &&
+  ) where (status = 'approved'::booking_status)
+);
+
+create table audit_events (
+  id uuid primary key default uuid_generate_v4(),
+  entity_type text not null check (entity_type in ('booking', 'company', 'profile')),
+  entity_id uuid,
+  action text not null,
+  actor_id uuid references profiles(id) on delete restrict,
+  metadata jsonb not null default '{}'::jsonb,
+  created_at timestamp with time zone default timezone('utc'::text, now()) not null
 );
 
 -- RLS Policies (Row Level Security)
@@ -76,6 +112,7 @@ alter table buildings enable row level security;
 alter table floors enable row level security;
 alter table rooms enable row level security;
 alter table bookings enable row level security;
+alter table audit_events enable row level security;
 
 -- Policies (Simplified for initial setup - refine as needed)
 -- Everyone can read buildings, floors, rooms

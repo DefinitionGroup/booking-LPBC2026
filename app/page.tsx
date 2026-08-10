@@ -40,6 +40,7 @@ import {
   RoomUtilizationChart,
 } from "@/components/dashboard/dashboard-charts";
 import { DashboardTabs } from "@/components/dashboard/dashboard-tabs";
+import { getBookingAvailability } from "@/lib/bookings/availability";
 
 function StatCard({
   title,
@@ -91,6 +92,15 @@ export default async function Home() {
   const {
     data: { user },
   } = await supabase.auth.getUser();
+  const { data: currentProfile } = user
+    ? await supabase
+        .from("profiles")
+        .select("id")
+        .eq("auth_user_id", user.id)
+        .eq("status", "active")
+        .single()
+    : { data: null };
+  const currentProfileId = currentProfile?.id || "00000000-0000-0000-0000-000000000000";
 
   const now = new Date();
   const nowISO = now.toISOString();
@@ -99,7 +109,7 @@ export default async function Home() {
   const { count: upcomingBookingsCount } = await supabase
     .from("bookings")
     .select("*", { count: "exact", head: true })
-    .eq("user_id", user?.id)
+    .eq("responsible_profile_id", currentProfileId)
     .gte("start_time", nowISO)
     .eq("status", "approved");
 
@@ -107,21 +117,16 @@ export default async function Home() {
     .from("rooms")
     .select("*", { count: "exact", head: true });
 
-  const { data: activeBookings } = await supabase
-    .from("bookings")
-    .select("room_id")
-    .eq("status", "approved")
-    .lte("start_time", nowISO)
-    .gt("end_time", nowISO);
+  const { data: activeBookings } = await getBookingAvailability(
+    supabase,
+    nowISO,
+    new Date(now.getTime() + 1000).toISOString()
+  );
 
-  const occupiedCount = activeBookings
-    ? new Set(activeBookings.map((b) => b.room_id)).size
-    : 0;
+  const occupiedCount = new Set(activeBookings.map((b) => b.room_id)).size;
   const availableRoomsCount = (totalRooms || 0) - occupiedCount;
 
-  const occupiedRoomIds = activeBookings
-    ? new Set(activeBookings.map((b) => b.room_id))
-    : new Set<string>();
+  const occupiedRoomIds = new Set(activeBookings.map((b) => b.room_id));
 
   const { data: rooms } = await supabase
     .from("rooms")
@@ -143,18 +148,20 @@ export default async function Home() {
   const monthStart = startOfMonth(now);
   const monthEnd = endOfMonth(now);
 
-  const { data: monthBookings } = await supabase
-    .from("bookings")
-    .select("id, title, start_time, end_time, status, rooms(name)")
-    .gte("start_time", monthStart.toISOString())
-    .lte("start_time", monthEnd.toISOString())
-    .order("start_time");
+  const { data: monthBookings } = await getBookingAvailability(
+    supabase,
+    monthStart.toISOString(),
+    monthEnd.toISOString()
+  );
 
-  const calendarBookings =
-    monthBookings?.map((booking) => ({
-      ...booking,
-      room: Array.isArray(booking.rooms) ? booking.rooms[0] : booking.rooms,
-    })) || [];
+  const calendarBookings = monthBookings.map((booking, index) => ({
+    id: `${booking.room_id}:${booking.start_time}:${index}`,
+    title: t("schedule.reserved"),
+    start_time: booking.start_time,
+    end_time: booking.end_time,
+    status: "approved",
+    room: { name: booking.room_name },
+  }));
 
   // --- Weekly activity data (current week, per day) ---
   const weekStart = startOfWeek(now, { weekStartsOn: 1 });
@@ -210,7 +217,7 @@ export default async function Home() {
   const { data: recentBookings } = await supabase
     .from("bookings")
     .select("id, title, start_time, status, rooms(name)")
-    .eq("user_id", user?.id)
+    .or(`user_id.eq.${currentProfileId},responsible_profile_id.eq.${currentProfileId}`)
     .order("start_time", { ascending: false })
     .limit(5);
 

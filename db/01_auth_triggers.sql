@@ -2,13 +2,17 @@
 
 -- 1. Create the function that runs when a user is created
 create or replace function public.handle_new_user()
-returns trigger as $$
+returns trigger
+language plpgsql
+security definer
+set search_path = ''
+as $$
 begin
-  insert into public.profiles (id, email, full_name, role)
-  values (new.id, new.email, new.raw_user_meta_data->>'full_name', 'user');
+  insert into public.profiles (id, auth_user_id, email, full_name, role, status)
+  values (new.id, new.id, new.email, new.raw_user_meta_data->>'full_name', 'user', 'active');
   return new;
 end;
-$$ language plpgsql security definer;
+$$;
 
 -- 2. Create the trigger on auth.users
 -- Drop if exists to avoid errors on re-run

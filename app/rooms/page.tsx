@@ -2,6 +2,7 @@ import { ShellWrapper } from "@/components/layout/shell-wrapper";
 import { createClient } from "@/lib/supabase/server";
 import { RoomCard } from "@/components/rooms/room-card";
 import { getServerI18n } from "@/lib/i18n/server";
+import { getBookingAvailability } from "@/lib/bookings/availability";
 
 export default async function RoomsPage() {
   const { t } = await getServerI18n();
@@ -14,13 +15,12 @@ export default async function RoomsPage() {
     .order("name");
 
   // 2. Fetch currently active bookings (Approved and happening NOW)
-  const now = new Date().toISOString();
-  const { data: activeBookings } = await supabase
-    .from("bookings")
-    .select("room_id")
-    .eq("status", "approved")
-    .lte("start_time", now)
-    .gt("end_time", now);
+  const now = new Date();
+  const { data: activeBookings } = await getBookingAvailability(
+    supabase,
+    now.toISOString(),
+    new Date(now.getTime() + 1000).toISOString()
+  );
 
   const occupiedRoomIds = new Set(activeBookings?.map(b => b.room_id));
 
