@@ -7,6 +7,7 @@ Meeting-room booking app built with Next.js App Router + Supabase.
 - Next.js 16 + React 19 + TypeScript
 - Tailwind CSS 4
 - Supabase Auth/Postgres (RLS enabled)
+- Vercel Blob for persistent room and hero images
 - Server Actions for booking/admin mutations
 
 ## Quick Start
@@ -32,6 +33,26 @@ npm run dev
 ## Environment Variables
 
 See `.env.example` for all required variables.
+
+### Image storage
+
+Production image uploads use a **public Vercel Blob store**. The images are
+public assets, but only an authenticated, active administrator can request an
+upload token.
+
+1. Open the Vercel project and go to **Storage**.
+2. Create a **Blob** store with **Public** access and connect it to this project.
+3. Confirm that Vercel added `BLOB_READ_WRITE_TOKEN` to Production, Preview,
+   and Development as needed.
+4. Pull the development environment when testing uploads locally:
+
+```bash
+vercel env pull .env.local
+```
+
+Room images are limited to 5 MB and hero backgrounds to 10 MB. Accepted formats
+are JPEG, PNG, WebP, and AVIF. The browser uploads directly to Blob after the
+server authorizes the request; the resulting public URL is saved in Supabase.
 
 ## Database Setup (Supabase SQL Editor)
 

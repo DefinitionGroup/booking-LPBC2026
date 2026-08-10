@@ -6,6 +6,7 @@ import * as z from "zod";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { useState, useCallback, useRef } from "react";
+import { upload as uploadBlob } from "@vercel/blob/client";
 import {
   ImagePlus,
   X,
@@ -30,6 +31,11 @@ import { Modal } from "@/components/ui/modal";
 import { useI18n } from "@/components/i18n-provider";
 import { updateRoom } from "@/actions/admin";
 import { cn } from "@/lib/utils";
+import {
+  getImageUploadPath,
+  ROOM_IMAGE_MAX_BYTES,
+  validateImageFile,
+} from "@/lib/uploads/image-upload";
 
 const AMENITIES = [
   { key: "WiFi", icon: Wifi },
@@ -96,20 +102,25 @@ export function EditRoomDialog({ open, onClose, room }: EditRoomDialogProps) {
   const uploadFile = useCallback(
     async (file: File) => {
       if (uploading) return;
+
+      const validationError = validateImageFile(file, ROOM_IMAGE_MAX_BYTES);
+      if (validationError) {
+        toast.error(validationError);
+        return;
+      }
+
       setUploading(true);
       try {
-        const formData = new FormData();
-        formData.append("file", file);
-        const res = await fetch("/api/upload", {
-          method: "POST",
-          body: formData,
-        });
-        if (!res.ok) {
-          const data = await res.json();
-          throw new Error(data.error || "Upload failed");
-        }
-        const { url } = await res.json();
-        setImageUrl(url);
+        const blob = await uploadBlob(
+          getImageUploadPath("rooms", file.type),
+          file,
+          {
+            access: "public",
+            contentType: file.type,
+            handleUploadUrl: "/api/upload",
+          }
+        );
+        setImageUrl(blob.url);
         toast.success(t("admin.imageUploaded"));
       } catch (err) {
         toast.error(
@@ -117,6 +128,7 @@ export function EditRoomDialog({ open, onClose, room }: EditRoomDialogProps) {
         );
       } finally {
         setUploading(false);
+        if (fileInputRef.current) fileInputRef.current.value = "";
       }
     },
     [uploading, t]
@@ -127,9 +139,7 @@ export function EditRoomDialog({ open, onClose, room }: EditRoomDialogProps) {
       e.preventDefault();
       setDragOver(false);
       const file = e.dataTransfer.files[0];
-      if (file && file.type.startsWith("image/")) {
-        uploadFile(file);
-      }
+      if (file) uploadFile(file);
     },
     [uploadFile]
   );

@@ -4,6 +4,7 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { z } from "zod";
+import { deleteManagedBlob } from "@/lib/uploads/blob-storage";
 
 const UpdateSchema = z.object({
   project_name: z.string().min(1).max(100),
@@ -73,12 +74,22 @@ export async function updateSiteSettings(formData: FormData) {
     { key: "hero_image_url", value: parsed.data.hero_image_url ?? null, updated_at: new Date().toISOString() },
   ];
 
+  const { data: currentHeroSetting } = await supabase
+    .from("site_settings")
+    .select("value")
+    .eq("key", "hero_image_url")
+    .maybeSingle();
+
   const { error } = await supabase
     .from("site_settings")
     .upsert(upserts, { onConflict: "key" });
 
   if (error) {
     redirect("/admin/settings?error=" + encodeURIComponent(error.message));
+  }
+
+  if (currentHeroSetting?.value !== parsed.data.hero_image_url) {
+    await deleteManagedBlob(currentHeroSetting?.value);
   }
 
   revalidatePath("/", "layout");

@@ -73,4 +73,23 @@ assert.match(companyEditingMigration, /'company_updated'/i);
 assert.match(companyEditingMigration, /for update/i);
 assert.match(companyEditingMigration, /revoke all on function public\.update_company_admin/i);
 
+for (const path of [
+  "app/api/upload/route.ts",
+  "app/api/upload/background/route.ts",
+]) {
+  const uploadRoute = read(path);
+  assert.match(uploadRoute, /handleAdminImageUpload/);
+  assert.doesNotMatch(uploadRoute, /fs\/promises|writeFile|mkdir/);
+}
+
+const blobStorage = read("lib/uploads/blob-storage.ts");
+assert.match(blobStorage, /supabase\.auth\.getUser\(\)/);
+assert.match(blobStorage, /profile\.role !== "admin"/);
+assert.match(blobStorage, /profile\.status !== "active"/);
+assert.match(blobStorage, /handleUpload\(/);
+assert.match(blobStorage, /allowedContentTypes/);
+assert.match(blobStorage, /maximumSizeInBytes/);
+assert.match(blobStorage, /addRandomSuffix: true/);
+assert.doesNotMatch(blobStorage, /service[_-]?role/i);
+
 console.log("Security boundary checks passed.");

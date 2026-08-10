@@ -3,6 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
 import { createClient } from "@/lib/supabase/server";
+import { deleteManagedBlob } from "@/lib/uploads/blob-storage";
 
 const idSchema = z.string().uuid();
 
@@ -166,11 +167,25 @@ export async function updateFloor(
 }
 
 export async function deleteRoom(id: string) {
+  const parsedId = idSchema.safeParse(id);
+  if (!parsedId.success) return { success: false, message: "errors.invalidFields" };
+
   const { supabase, error: authError } = await assertAdmin();
   if (authError) return { success: false, message: authError };
 
-  const { error } = await supabase.from("rooms").delete().eq("id", id);
+  const { data: room } = await supabase
+    .from("rooms")
+    .select("image_url")
+    .eq("id", parsedId.data)
+    .single();
+
+  const { error } = await supabase
+    .from("rooms")
+    .delete()
+    .eq("id", parsedId.data);
   if (error) return { success: false, message: error.message };
+
+  await deleteManagedBlob(room?.image_url);
 
   revalidatePath("/admin/rooms");
   revalidatePath("/rooms");
@@ -202,8 +217,17 @@ export async function updateRoom(
     image_url: string | null;
   }
 ) {
+  const parsedId = idSchema.safeParse(id);
+  if (!parsedId.success) return { success: false, message: "errors.invalidFields" };
+
   const { supabase, error: authError } = await assertAdmin();
   if (authError) return { success: false, message: authError };
+
+  const { data: currentRoom } = await supabase
+    .from("rooms")
+    .select("image_url")
+    .eq("id", parsedId.data)
+    .single();
 
   const { error } = await supabase
     .from("rooms")
@@ -213,9 +237,13 @@ export async function updateRoom(
       amenities: data.amenities,
       image_url: data.image_url,
     })
-    .eq("id", id);
+    .eq("id", parsedId.data);
 
   if (error) return { success: false, message: error.message };
+
+  if (currentRoom?.image_url !== data.image_url) {
+    await deleteManagedBlob(currentRoom?.image_url);
+  }
 
   revalidatePath("/admin/rooms");
   revalidatePath("/rooms");
