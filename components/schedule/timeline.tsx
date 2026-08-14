@@ -4,23 +4,19 @@ import { format, differenceInMinutes } from "date-fns";
 import { cn } from "@/lib/utils";
 import { useI18n } from "@/components/i18n-provider";
 import { getDateFnsLocale } from "@/lib/i18n/date-fns";
+import {
+    layoutTimelineBookings,
+    type TimelineBooking,
+} from "./timeline-layout";
 
-interface Booking {
-    id: string;
-    title: string;
-    start_time: string;
-    end_time: string;
-    room?: { name: string };
-    status: string;
-}
-
-export function Timeline({ bookings }: { bookings: Booking[] }) {
+export function Timeline({ bookings }: { bookings: TimelineBooking[] }) {
     const { t, locale } = useI18n();
     const dateLocale = getDateFnsLocale(locale);
     const startHour = 6; // 6 AM
     const endHour = 19; // 7 PM
     const totalHours = endHour - startHour;
     const hourHeight = 56; // px
+    const positionedBookings = layoutTimelineBookings(bookings);
 
     const hours = Array.from({ length: totalHours + 1 }, (_, i) => startHour + i);
 
@@ -49,7 +45,7 @@ export function Timeline({ bookings }: { bookings: Booking[] }) {
 
                     {/* Events */}
                     <div className="absolute top-0 left-16 right-0 bottom-0">
-                        {bookings.map((booking) => {
+                        {positionedBookings.map(({ booking, column, columnCount }) => {
                             const start = new Date(booking.start_time);
                             const end = new Date(booking.end_time);
 
@@ -66,12 +62,17 @@ export function Timeline({ bookings }: { bookings: Booking[] }) {
                                 <div
                                     key={booking.id}
                                     className={cn(
-                                        "absolute left-2 right-2 rounded-md p-2 text-xs border border-l-4 overflow-hidden hover:z-10 transition-all cursor-pointer shadow-sm",
+                                        "absolute rounded-md p-2 text-xs border border-l-4 overflow-hidden hover:z-10 transition-all cursor-pointer shadow-sm",
                                         booking.status === 'approved'
                                             ? "bg-green-500/10 border-green-500 text-green-900 dark:text-green-100"
                                             : "bg-blue-500/10 border-blue-500 text-blue-900 dark:text-blue-100"
                                     )}
-                                    style={{ top: `${top}px`, height: `${height}px` }}
+                                    style={{
+                                        top: `${top}px`,
+                                        height: `${height}px`,
+                                        left: `calc(${(column / columnCount) * 100}% + ${column === 0 ? 8 : 4}px)`,
+                                        right: `calc(${((columnCount - column - 1) / columnCount) * 100}% + ${column === columnCount - 1 ? 8 : 4}px)`,
+                                    }}
                                 >
                                     <div className="truncate">{booking.title}</div>
                                     <div className="text-muted-foreground truncate">{booking.room?.name}</div>
