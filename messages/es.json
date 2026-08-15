@@ -141,6 +141,7 @@
     "bookingSubmitted": "¡Solicitud enviada!",
     "bookingFailed": "No se pudo enviar la reserva.",
     "activeCompanyRequired": "Se requiere una empresa activa asignada para crear reservas.",
+    "bookingCompanyDataInvalid": "Esta reserva contiene datos heredados de empresa y no se puede actualizar hasta aplicar la migración de base de datos.",
     "cancelBooking": "Cancelar reserva",
     "cancelBookingDescription": "Conserva el historial de la reserva pero libera la sala. Indica el motivo de la cancelación.",
     "cancellationReason": "Motivo de cancelación",

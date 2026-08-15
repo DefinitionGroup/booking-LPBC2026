@@ -70,6 +70,7 @@ async function getAdminContext() {
 
 function lifecycleError(code?: string) {
   if (code === "23P01") return "bookings.roomAlreadyBooked";
+  if (code === "23502" || code === "23514") return "bookings.bookingCompanyDataInvalid";
   if (code === "42501") return "errors.unauthorized";
   if (code === "P0002") return "errors.notFound";
   if (code === "22023") return "errors.invalidTransition";

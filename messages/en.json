@@ -141,6 +141,7 @@
     "bookingSubmitted": "Booking request submitted!",
     "bookingFailed": "Failed to submit booking.",
     "activeCompanyRequired": "An active company assignment is required to create bookings.",
+    "bookingCompanyDataInvalid": "This booking has legacy company data and cannot be updated until the database migration is applied.",
     "cancelBooking": "Cancel booking",
     "cancelBookingDescription": "This keeps the booking history but releases the room. Give a reason for the cancellation.",
     "cancellationReason": "Reason for cancellation",

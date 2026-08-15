@@ -2,6 +2,17 @@
 
 All notable changes to this project are documented in this file.
 
+## [Unreleased]
+
+### Fixed
+
+- Display simultaneous room bookings in separate schedule columns instead of overlapping them.
+- Allow lifecycle transitions on legacy bookings without a company assignment while continuing to require company attribution for new bookings.
+
+### Upgrade Notes
+
+- Apply `db/13_legacy_company_safe_booking_updates.sql` after migration 12 before deploying this release.
+
 ## [0.2.0] - 2026-08-10
 
 ### Added

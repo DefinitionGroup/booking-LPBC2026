@@ -73,6 +73,14 @@ assert.match(companyEditingMigration, /'company_updated'/i);
 assert.match(companyEditingMigration, /for update/i);
 assert.match(companyEditingMigration, /revoke all on function public\.update_company_admin/i);
 
+const legacyBookingMigration = read("db/13_legacy_company_safe_booking_updates.sql");
+assert.match(legacyBookingMigration, /drop constraint if exists bookings_company_required/i);
+assert.match(legacyBookingMigration, /create or replace function public\.enforce_booking_company_assignment/i);
+assert.match(legacyBookingMigration, /tg_op = 'INSERT'[\s\S]*new\.company_id is null/i);
+assert.match(legacyBookingMigration, /old\.company_id is not null[\s\S]*new\.company_id is null/i);
+assert.match(legacyBookingMigration, /before insert or update of company_id on public\.bookings/i);
+assert.match(legacyBookingMigration, /errcode = '23502'/i);
+
 for (const path of [
   "app/api/upload/route.ts",
   "app/api/upload/background/route.ts",
